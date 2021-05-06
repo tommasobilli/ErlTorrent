@@ -1,36 +1,47 @@
 package com.example.ErlTorrent;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.*;
 
 public class PeerInfoConfig {
     private HashMap<String, RemotePeerInfo> peerInfoMap;
     private ArrayList<String> peerList;
 
-    public PeerInfoConfig(){
+    public static void main(String[] args) throws IOException, ParseException {
+        Object obj = new JSONParser().parse(new FileReader("peerList.json"));
+        JSONObject json = (JSONObject) obj;
+        PeerInfoConfig pic = new PeerInfoConfig();
+        pic.loadConfigFile(json);
+
+    }
+
+    public PeerInfoConfig() {
         this.peerInfoMap = new HashMap<>();
         this.peerList = new ArrayList<>();
     }
 
-    public void loadConfigFile()    //Carico la lista dei peer dal JSON richiesto al tracker nella HASHMAP
+    public void loadConfigFile(JSONObject peerList)    //Carico la lista dei peer dal JSON richiesto al tracker nella HASHMAP
     {
-        //String st;
-        //BufferedReader in;
-        //try {
-            //in = new BufferedReader(new FileReader("PeerInfo.cfg"));
-            //while((st = in.readLine()) != null) {
-               // String[] tokens = st.split("\\s+");
-                //this.peerInfoMap.put(tokens[0],new RemotePeerInfo(tokens[0], tokens[1], tokens[2], tokens[3]));
-                //this.peerList.add(tokens[0]);
-            //}
-            //in.close();
-        //}
-        //catch (Exception ex) {
-            //System.out.println(ex.toString());
-        //}
+        JSONArray peers = (JSONArray) peerList.get("peers");
+        for (JSONObject peer : (Iterable<JSONObject>) peers) {
+            String pid = (String) peer.get("pid");
+            String address = (String) peer.get("address");
+            String port = (String) peer.get("port");
+            String containsFile = (String) peer.get("containsFile");
+            this.peerInfoMap.put(pid, new RemotePeerInfo(pid, address, port, containsFile));
+            this.peerList.add(pid);
+        }
     }
 
-    public RemotePeerInfo getPeerConfig(String peerID){
+    public RemotePeerInfo getPeerConfig(String peerID) {
         return this.peerInfoMap.get(peerID);
     }
 
@@ -38,7 +49,12 @@ public class PeerInfoConfig {
         return this.peerInfoMap;
     }
 
-    public ArrayList<String> getPeerList(){
+    public ArrayList<String> getPeerList() {
         return this.peerList;
+    }
+
+    public void addPeer(RemotePeerInfo remotePeerInfo) {
+        this.peerInfoMap.put(remotePeerInfo.peerId, remotePeerInfo);
+        this.peerList.add(remotePeerInfo.peerId);
     }
 }

@@ -12,11 +12,14 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import src.PeerHandler;
-import src.PeerInfoConfig;
-import src.PeerLogger;
-import src.PeerServer;
-import src.RemotePeerInfo;
+import com.example.ErlTorrent.PeerHandler;
+import com.example.ErlTorrent.PeerInfoConfig;
+import com.example.ErlTorrent.PeerLogger;
+import com.example.ErlTorrent.PeerServer;
+import com.example.ErlTorrent.RemotePeerInfo;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class PeerAdmin {
     private String peerID;
@@ -35,10 +38,9 @@ public class PeerAdmin {
     private volatile RandomAccessFile fileRaf;
     private Thread serverThread;
     private volatile Boolean iamDone;
-    private commonConfig commonConfig;
+    private CommonConfig commonConfig;
 
-    public PeerAdmin(String peerID) {
-        this.peerID = peerID;
+    public PeerAdmin() throws IOException, ParseException {
         this.peerInfoMap = new HashMap<>();
         this.piecesAvailability = new HashMap<>();
         this.peerList = new ArrayList<>();
@@ -47,12 +49,26 @@ public class PeerAdmin {
         this.peerInfoConfig = new PeerInfoConfig();
         this.logger = new PeerLogger(this.peerID);
         this.iamDone = false;
+        loadConfig("config.json");
         this.initPeer();
+    }
+
+    private void loadConfig(String filename) throws IOException, ParseException {
+        this.commonConfig = new CommonConfig(filename);
+        Object obj = new JSONParser().parse(new FileReader(filename));
+        JSONObject json = (JSONObject) obj;
+        this.peerID = (String) json.get("pid");
+        String port = (String) json.get("listeningPort");
+        RemotePeerInfo myPeerInfo = new RemotePeerInfo(this.peerID, "127.0.0.1", port, "0");
+        this.peerInfoConfig.addPeer(myPeerInfo);
     }
 
     public void initPeer() {
         try {
-            this.peerInfoConfig.loadConfigFile();
+            // GET JSON from REST API
+            Object obj = new JSONParser().parse(new FileReader("peerList.json"));
+            JSONObject peerList = (JSONObject) obj;
+            this.peerInfoConfig.loadConfigFile(peerList);
             this.pieceCount = this.calcPieceCount();    //calcola il numero di pezzi del file da ricchiedere
             this.requestedInfo = new String[this.pieceCount];
             this.myConfig = this.peerInfoConfig.getPeerConfig(this.peerID); //Ricavo la mia configurazione

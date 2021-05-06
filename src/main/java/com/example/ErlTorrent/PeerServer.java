@@ -7,10 +7,10 @@ import java.net.SocketTimeoutException;
 import java.rmi.Remote;
 import java.util.HashMap;
 
-import src.PeerAdmin;
-import src.PeerHandler;
-import src.PeerInfoConfig;
-import src.RemotePeerInfo;
+import com.example.ErlTorrent.PeerAdmin;
+import com.example.ErlTorrent.PeerHandler;
+import com.example.ErlTorrent.PeerInfoConfig;
+import com.example.ErlTorrent.RemotePeerInfo;
 
 public class PeerServer implements Runnable {
     private String peerID;

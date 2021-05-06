@@ -1,0 +1,3 @@
+- Utente si connette al webserver, che gli restituisce indirizzo tracker e PID (e porta di ascolto). (viene scaricato un file json che si usa come configurazione di lancio)
+- HTTP request al tracker per ottenere lista dei peer a cui connettersi per avere il file e metadati.
+- Quando un utente si connette a una rete di peer per richiedere un file mette automaticamente in condivisione il file richiesto (parziale).

@@ -1,4 +1,5 @@
 package com.example.ErlTorrent;
+
 public class RemotePeerInfo {
     public String peerId;
     public String peerAddress;
