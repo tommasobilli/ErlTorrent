@@ -126,10 +126,7 @@ public class PeerAdmin {
         try {
             Thread.sleep(5000);
             for (String pid : this.peerList) {
-                if (pid.equals(this.peerID)) {
-                    break;
-                }
-                else {
+                if (!pid.equals(this.peerID)) {
                     RemotePeerInfo peer = this.peerInfoMap.get(pid);
                     Socket temp = new Socket(peer.peerAddress, peer.peerPort);
                     PeerHandler p = new PeerHandler(temp, this);
