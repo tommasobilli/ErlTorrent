@@ -47,9 +47,9 @@ public class PeerAdmin {
         this.joinedPeers = new HashMap<>();
         this.joinedThreads = new HashMap<>();
         this.peerInfoConfig = new PeerInfoConfig();
+        loadConfig("config.json");
         this.logger = new PeerLogger(this.peerID);
         this.iamDone = false;
-        loadConfig("config.json");
         this.initPeer();
     }
 
@@ -129,7 +129,7 @@ public class PeerAdmin {
                 if (!pid.equals(this.peerID)) {
                     RemotePeerInfo peer = this.peerInfoMap.get(pid);
                     Socket temp = new Socket(peer.peerAddress, peer.peerPort);
-                    PeerHandler p = new PeerHandler(temp, this);
+                    PeerHandler p = new PeerHandler(temp, this, true);
                     p.setEndPeerID(pid);
                     this.addJoinedPeer(p, pid);
                     Thread t = new Thread(p);

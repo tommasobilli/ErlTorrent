@@ -30,7 +30,7 @@ public class PeerServer implements Runnable {
             try {
                 Socket neighbour = this.listener.accept();
                 //possibile mettere un Executor con un Thread pool
-                PeerHandler neighbourHandler = new PeerHandler(neighbour, this.peerAdmin); //Accetta connessione dai vicini
+                PeerHandler neighbourHandler = new PeerHandler(neighbour, this.peerAdmin, false); //Accetta connessione dai vicini
                 new Thread(neighbourHandler).start();     //Associa un thread per ogni vicino
                 //String addr = neighbour.getInetAddress().toString();
                 //int port = neighbour.getPort();

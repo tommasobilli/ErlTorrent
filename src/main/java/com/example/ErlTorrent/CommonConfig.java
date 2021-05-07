@@ -33,10 +33,6 @@ public class CommonConfig {
 
         this.FileName = (String) json.get("FileName");
         this.PieceSize = Integer.parseInt((String) json.get("PieceSize"));
-        File file = new File(this.FileName);
-        if (!file.exists() || !file.isFile()) {
-            throw new FileNotFoundException();
-        }
-        this.FileSize = (int) file.length();
+        this.FileSize = Integer.parseInt((String) json.get("FileSize"));
     }
 }

@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.*;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.nio.*;
 import java.lang.*;
@@ -14,6 +15,7 @@ import java.lang.*;
 public class PeerHandler implements Runnable {
     private Socket listener;
     private PeerAdmin peerAdmin;
+    private boolean first;
     private String endPeerID;
     private boolean connectionEstablished = false;
     private boolean initializer = false;
@@ -22,9 +24,10 @@ public class PeerHandler implements Runnable {
     private volatile ObjectOutputStream out;
     private volatile ObjectInputStream in;
 
-    public PeerHandler(Socket listener, PeerAdmin admin) {
+    public PeerHandler(Socket listener, PeerAdmin admin, boolean first) {
         this.listener = listener;   //Il vicino da cui ho ricevuto la richiesta
         this.peerAdmin = admin;
+        this.first = first;
         initStreams();
         this.hsm = new HandshakeMessage(this.peerAdmin.getPeerID());
 
@@ -56,13 +59,24 @@ public class PeerHandler implements Runnable {
 
     public void run() {
         try {
-            byte[] msg = this.hsm.buildHandShakeMessage();
-            this.out.write(msg);
-            this.out.flush();
+            byte[] response = new byte[32];
+            if (this.first) {
+                byte[] msg = this.hsm.buildHandShakeMessage();
+                this.out.write(msg);
+                this.out.flush();
+                System.out.println(Arrays.toString(msg));
+
+                this.in.readFully(response);
+            } else {
+                System.out.println("Son qui");
+                this.in.readFully(response);
+                System.out.println(Arrays.toString(response));
+                byte[] msg = this.hsm.buildHandShakeMessage();
+                this.out.write(msg);
+                this.out.flush();
+            }
             while (true) {
                 if (!this.connectionEstablished) {
-                    byte[] response = new byte[32];
-                    this.in.readFully(response);
                     this.processHandShakeMessage(response);
                     if (this.peerAdmin.hasFile() || this.peerAdmin.getAvailabilityOf(this.peerAdmin.getPeerID()).cardinality() > 0) {
                         this.sendBitField();   //se ho qualche chunk lo avverto
@@ -71,11 +85,11 @@ public class PeerHandler implements Runnable {
                     while (this.in.available() < 4) {
 
                         int respLen = this.in.readInt();
-                        byte[] response = new byte[respLen];
-                        this.in.readFully(response);
-                        char messageType = (char) response[0]; //vedere il formato dei messaggi
+                        byte[] response_ = new byte[respLen];
+                        this.in.readFully(response_);
+                        char messageType = (char) response_[0]; //vedere il formato dei messaggi
                         ActualMessage am = new ActualMessage();
-                        am.readActualMessage(respLen, response);
+                        am.readActualMessage(respLen, response_);
                         if (messageType == '4') {
                             // Handles Have Message
                             int pieceIndex = am.getPieceIndexFromPayload();
