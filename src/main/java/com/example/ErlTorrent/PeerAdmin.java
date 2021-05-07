@@ -4,13 +4,8 @@ import java.io.*;
 import java.lang.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import com.example.ErlTorrent.PeerHandler;
 import com.example.ErlTorrent.PeerInfoConfig;
@@ -59,7 +54,8 @@ public class PeerAdmin {
         JSONObject json = (JSONObject) obj;
         this.peerID = (String) json.get("pid");
         String port = (String) json.get("listeningPort");
-        RemotePeerInfo myPeerInfo = new RemotePeerInfo(this.peerID, "127.0.0.1", port, "0");
+        String b = (String) json.get("ContainsFile");
+        RemotePeerInfo myPeerInfo = new RemotePeerInfo(this.peerID, "127.0.0.1", port, b);
         this.peerInfoConfig.addPeer(myPeerInfo);
     }
 
@@ -112,6 +108,7 @@ public class PeerAdmin {
         // A server socket waits for requests to come in over the network. It performs some operation based on that request,
         // and then possibly returns a result to the requester.
         try {
+            System.out.println(this.myConfig.peerPort);
             this.listener = new ServerSocket(this.myConfig.peerPort);  //Porta dove ascolto le richieste (associata con il mio indirizzo e porta)
             this.server = new PeerServer(this.peerID, this.listener, this);
             this.serverThread = new Thread(this.server);
@@ -128,6 +125,7 @@ public class PeerAdmin {
             for (String pid : this.peerList) {
                 if (!pid.equals(this.peerID)) {
                     RemotePeerInfo peer = this.peerInfoMap.get(pid);
+                    System.out.println(peer.peerPort);
                     Socket temp = new Socket(peer.peerAddress, peer.peerPort);
                     PeerHandler p = new PeerHandler(temp, this, true);
                     p.setEndPeerID(pid);
@@ -147,7 +145,8 @@ public class PeerAdmin {
         try {
             int position = this.getPieceSize() * pieceindex;
             this.fileRaf.seek(position);
-            this.fileRaf.write(data);
+            String str = new String(data, StandardCharsets.UTF_8);
+            this.fileRaf.writeChars(str);
         }
         catch (Exception e) {
             e.printStackTrace();

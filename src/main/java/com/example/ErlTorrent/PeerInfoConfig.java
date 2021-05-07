@@ -15,14 +15,6 @@ public class PeerInfoConfig {
     private HashMap<String, RemotePeerInfo> peerInfoMap;
     private ArrayList<String> peerList;
 
-    public static void main(String[] args) throws IOException, ParseException {
-        Object obj = new JSONParser().parse(new FileReader("peerList.json"));
-        JSONObject json = (JSONObject) obj;
-        PeerInfoConfig pic = new PeerInfoConfig();
-        pic.loadConfigFile(json);
-
-    }
-
     public PeerInfoConfig() {
         this.peerInfoMap = new HashMap<>();
         this.peerList = new ArrayList<>();

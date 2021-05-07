@@ -18,10 +18,6 @@ public class CommonConfig {
     public int FileSize;
     public int PieceSize;
 
-    public static void main(String[] args) throws IOException, ParseException {
-        CommonConfig cc = new CommonConfig("config.json");
-    }
-
     public CommonConfig(String jsonFileName) throws IOException, ParseException {
         this.jsonFileName = jsonFileName;
         loadCommonFile();

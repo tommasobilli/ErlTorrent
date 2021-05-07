@@ -59,34 +59,27 @@ public class PeerHandler implements Runnable {
 
     public void run() {
         try {
-            byte[] response = new byte[32];
-            if (this.first) {
-                byte[] msg = this.hsm.buildHandShakeMessage();
-                this.out.write(msg);
-                this.out.flush();
-                System.out.println(Arrays.toString(msg));
-
-                this.in.readFully(response);
-            } else {
-                System.out.println("Son qui");
-                this.in.readFully(response);
-                System.out.println(Arrays.toString(response));
-                byte[] msg = this.hsm.buildHandShakeMessage();
-                this.out.write(msg);
-                this.out.flush();
-            }
+            byte[] msg = this.hsm.buildHandShakeMessage();
+            this.out.write(msg);
+            this.out.flush();
+            System.out.println(Arrays.toString(msg));
             while (true) {
                 if (!this.connectionEstablished) {
+                    byte[] response = new byte[32];
+                    System.out.println("Son qui");
+                    this.in.read(response);
+                    System.out.println(Arrays.toString(response));
                     this.processHandShakeMessage(response);
                     if (this.peerAdmin.hasFile() || this.peerAdmin.getAvailabilityOf(this.peerAdmin.getPeerID()).cardinality() > 0) {
                         this.sendBitField();   //se ho qualche chunk lo avverto
+                        System.out.println("Mando BitField");
                     }
                 } else {
                     while (this.in.available() < 4) {
-
+                        System.out.println("ciso");
                         int respLen = this.in.readInt();
                         byte[] response_ = new byte[respLen];
-                        this.in.readFully(response_);
+                        this.in.read(response_);
                         char messageType = (char) response_[0]; //vedere il formato dei messaggi
                         ActualMessage am = new ActualMessage();
                         am.readActualMessage(respLen, response_);
@@ -105,13 +98,17 @@ public class PeerHandler implements Runnable {
                             this.peerAdmin.getLogger().receiveHave(this.endPeerID, pieceIndex);
                         } else if (messageType == '5') {
                             // Handles BitField message
+                            System.out.println("Ricevo BitField");
                             BitSet bset = am.getBitFieldMessage();
                             this.processBitFieldMessage(bset);
                             if (!this.peerAdmin.hasFile()) {
                                 if (this.peerAdmin.checkIfInterested(this.endPeerID)) {
-
+                                    int requestindex = this.peerAdmin.checkForRequested(this.endPeerID);
+                                    if (requestindex != -1) {
+                                        this.sendRequestMessage(requestindex);
+                                    }
                                 } else {
-
+                                    System.out.println("nessuna richiesta");
                                 }
                             }
                         } else if (messageType == '6') {
@@ -128,14 +125,14 @@ public class PeerHandler implements Runnable {
                             this.peerAdmin.getLogger().downloadPiece(this.endPeerID, pieceIndex,
                                     this.peerAdmin.getCompletedPieceCount());
                             this.peerAdmin.setRequestedInfo(pieceIndex, null);
-                            this.peerAdmin.broadcastHave(pieceIndex);
+                            //this.peerAdmin.broadcastHave(pieceIndex);
                             if (this.peerAdmin.getAvailabilityOf(this.peerAdmin.getPeerID()).cardinality() != this.peerAdmin
                                     .getPieceCount()) {
                                 int requestindex = this.peerAdmin.checkForRequested(this.endPeerID);
                                 if (requestindex != -1) {
                                     this.sendRequestMessage(requestindex);
                                 } else {
-
+                                    System.out.println("nessuna richiesta");
                                 }
                             } else {
                                 this.peerAdmin.getLogger().downloadComplete();
