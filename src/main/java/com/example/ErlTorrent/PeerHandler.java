@@ -62,7 +62,7 @@ public class PeerHandler implements Runnable {
             System.out.println("Handshake message sent.");
             while (true) {
                 if (!this.connectionEstablished) {
-                    byte[] response = readBytes(32);
+                    byte[] response = readBytes(40);
                     System.out.println("Handshake message received.");
                     this.processHandShakeMessage(response);
                     if (this.peerAdmin.hasFile() || this.peerAdmin.getAvailabilityOf(this.peerAdmin.getPeerID()).cardinality() > 0) {

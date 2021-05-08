@@ -70,7 +70,7 @@ public class PeerAdmin {
             this.myConfig = this.peerInfoConfig.getPeerConfig(this.peerID); //Ricavo la mia configurazione
             this.peerInfoMap = this.peerInfoConfig.getPeerInfoMap();
             this.peerList = this.peerInfoConfig.getPeerList();
-            String filepath = "peer_" + this.peerID;
+            String filepath = "files";
             File file = new File(filepath);
             file.mkdir();
             String filename = filepath + "/" + getFileName();
@@ -108,11 +108,11 @@ public class PeerAdmin {
         // A server socket waits for requests to come in over the network. It performs some operation based on that request,
         // and then possibly returns a result to the requester.
         try {
-            System.out.println(this.myConfig.peerPort);
             this.listener = new ServerSocket(this.myConfig.peerPort);  //Porta dove ascolto le richieste (associata con il mio indirizzo e porta)
             this.server = new PeerServer(this.peerID, this.listener, this);
             this.serverThread = new Thread(this.server);
             this.serverThread.start();
+            System.out.println("Started listening socket on port " + this.myConfig.peerPort + ".");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -125,7 +125,6 @@ public class PeerAdmin {
             for (String pid : this.peerList) {
                 if (!pid.equals(this.peerID)) {
                     RemotePeerInfo peer = this.peerInfoMap.get(pid);
-                    System.out.println(peer.peerPort);
                     Socket temp = new Socket(peer.peerAddress, peer.peerPort);
                     PeerHandler p = new PeerHandler(temp, this, true);
                     p.setEndPeerID(pid);
@@ -133,6 +132,7 @@ public class PeerAdmin {
                     Thread t = new Thread(p);
                     this.addJoinedThreads(pid, t);
                     t.start();
+                    System.out.println("Started PeerHandler on " + peer.peerAddress + ":" + peer.peerPort + ".");
                 }
             }
         }
