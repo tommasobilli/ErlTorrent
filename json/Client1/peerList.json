@@ -1,17 +1,16 @@
 {
 	"peers": [
 		{
-			"pid": "1",
+			"pid": "21",
 			"address": "127.0.0.1",
 			"port": "5555",
 			"containsFile": "1"
 		},
 		{
-			"pid": "2",
+			"pid": "22",
 			"address": "127.0.0.1",
-			"port": "5556",
-			"containsFile": "0"
+			"port": "7777",
+			"containsFile": "1"
 		}
-
 	]
 }

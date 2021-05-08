@@ -33,6 +33,6 @@ public class HandshakeMessage {
 
     public void readHandShakeMessage(byte[] message){
         String msg = new String(message,StandardCharsets.UTF_8);
-        this.peerID = msg.substring(28,32);
+        this.peerID = msg.substring(28,30);
     }
 }

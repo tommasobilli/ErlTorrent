@@ -173,7 +173,8 @@ public class PeerAdmin {
 
     public synchronized void broadcastHave(int pieceIndex) {
         for (String key : this.joinedPeers.keySet()) {
-            this.joinedPeers.get(key).sendHaveMessage(pieceIndex);
+            if (this.peerInfoMap.get(key).containsFile == 0)
+                this.joinedPeers.get(key).sendHaveMessage(pieceIndex);
         }
     }
 

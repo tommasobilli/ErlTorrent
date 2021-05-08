@@ -1,0 +1,9 @@
+{
+	"pid": "22",
+	"listeningPort": "7777",
+	"trackerAddress": "127.0.0.1",
+	"FileName": "image.png",
+	"FileSize": "8207989",
+	"PieceSize": "100000",
+	"ContainsFile": "1"
+}

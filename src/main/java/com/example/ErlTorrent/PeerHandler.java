@@ -59,11 +59,11 @@ public class PeerHandler implements Runnable {
             byte[] msg = this.hsm.buildHandShakeMessage();
             this.out.write(msg);
             this.out.flush();
-            System.out.println(Arrays.toString(msg));
+            System.out.println("Handshake message sent.");
             while (true) {
                 if (!this.connectionEstablished) {
                     byte[] response = readBytes(32);
-                    System.out.println(Arrays.toString(response));
+                    System.out.println("Handshake message received.");
                     this.processHandShakeMessage(response);
                     if (this.peerAdmin.hasFile() || this.peerAdmin.getAvailabilityOf(this.peerAdmin.getPeerID()).cardinality() > 0) {
                         this.sendBitField();   //se ho qualche chunk lo avverto
@@ -115,8 +115,8 @@ public class PeerHandler implements Runnable {
                             boolean alldone = this.peerAdmin.checkIfAllPeersAreDone();
                             this.peerAdmin.getLogger().downloadPiece(this.endPeerID, pieceIndex,
                                     this.peerAdmin.getCompletedPieceCount());
-                            //this.peerAdmin.setRequestedInfo(pieceIndex, null);
-                            //this.peerAdmin.broadcastHave(pieceIndex);
+                            this.peerAdmin.setRequestedInfo(pieceIndex, null);
+                            this.peerAdmin.broadcastHave(pieceIndex);
                             if (this.peerAdmin.getAvailabilityOf(this.peerAdmin.getPeerID()).cardinality() != this.peerAdmin
                                     .getPieceCount()) {
                                 int requestindex = this.peerAdmin.checkForRequested(this.endPeerID);
@@ -128,6 +128,7 @@ public class PeerHandler implements Runnable {
                             } else {
                                 this.peerAdmin.getLogger().downloadComplete();
                                 if (alldone) {
+                                    System.out.println("Download complete.");
                                     this.peerAdmin.cancelChokes();
                                 }
 
