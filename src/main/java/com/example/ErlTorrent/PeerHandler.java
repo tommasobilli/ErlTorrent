@@ -124,7 +124,7 @@ public class PeerHandler implements Runnable {
                             Boolean alldone = this.peerAdmin.checkIfAllPeersAreDone();
                             this.peerAdmin.getLogger().downloadPiece(this.endPeerID, pieceIndex,
                                     this.peerAdmin.getCompletedPieceCount());
-                            this.peerAdmin.setRequestedInfo(pieceIndex, null);
+                            //this.peerAdmin.setRequestedInfo(pieceIndex, null);
                             //this.peerAdmin.broadcastHave(pieceIndex);
                             if (this.peerAdmin.getAvailabilityOf(this.peerAdmin.getPeerID()).cardinality() != this.peerAdmin
                                     .getPieceCount()) {

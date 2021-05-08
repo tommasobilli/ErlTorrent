@@ -145,8 +145,7 @@ public class PeerAdmin {
         try {
             int position = this.getPieceSize() * pieceindex;
             this.fileRaf.seek(position);
-            String str = new String(data, StandardCharsets.UTF_8);
-            this.fileRaf.writeChars(str);
+            this.fileRaf.write(data);
         }
         catch (Exception e) {
             e.printStackTrace();
