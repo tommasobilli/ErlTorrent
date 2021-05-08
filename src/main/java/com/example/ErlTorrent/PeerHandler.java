@@ -1,9 +1,6 @@
 package com.example.ErlTorrent;
 
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.*;
@@ -65,24 +62,19 @@ public class PeerHandler implements Runnable {
             System.out.println(Arrays.toString(msg));
             while (true) {
                 if (!this.connectionEstablished) {
-                    byte[] response = new byte[32];
-                    System.out.println("Son qui");
-                    this.in.read(response);
+                    byte[] response = readBytes(32);
                     System.out.println(Arrays.toString(response));
                     this.processHandShakeMessage(response);
                     if (this.peerAdmin.hasFile() || this.peerAdmin.getAvailabilityOf(this.peerAdmin.getPeerID()).cardinality() > 0) {
                         this.sendBitField();   //se ho qualche chunk lo avverto
-                        System.out.println("Mando BitField");
                     }
                 } else {
-                    while (this.in.available() < 4) {
-                        System.out.println("ciso");
+                    while (this.in.available() > 0) {
                         int respLen = this.in.readInt();
-                        byte[] response_ = new byte[respLen];
-                        this.in.read(response_);
-                        char messageType = (char) response_[0]; //vedere il formato dei messaggi
+                        byte[] response = readBytes(respLen);
+                        char messageType = (char) response[0]; //vedere il formato dei messaggi
                         ActualMessage am = new ActualMessage();
-                        am.readActualMessage(respLen, response_);
+                        am.readActualMessage(respLen, response);
                         if (messageType == '4') {
                             // Handles Have Message
                             int pieceIndex = am.getPieceIndexFromPayload();
@@ -98,7 +90,6 @@ public class PeerHandler implements Runnable {
                             this.peerAdmin.getLogger().receiveHave(this.endPeerID, pieceIndex);
                         } else if (messageType == '5') {
                             // Handles BitField message
-                            System.out.println("Ricevo BitField");
                             BitSet bset = am.getBitFieldMessage();
                             this.processBitFieldMessage(bset);
                             if (!this.peerAdmin.hasFile()) {
@@ -121,7 +112,7 @@ public class PeerHandler implements Runnable {
                             byte[] piece = am.getPieceFromPayload();
                             this.peerAdmin.writeToFile(piece, pieceIndex);
                             this.peerAdmin.updatePieceAvailability(this.peerAdmin.getPeerID(), pieceIndex);
-                            Boolean alldone = this.peerAdmin.checkIfAllPeersAreDone();
+                            boolean alldone = this.peerAdmin.checkIfAllPeersAreDone();
                             this.peerAdmin.getLogger().downloadPiece(this.endPeerID, pieceIndex,
                                     this.peerAdmin.getCompletedPieceCount());
                             //this.peerAdmin.setRequestedInfo(pieceIndex, null);
@@ -154,6 +145,20 @@ public class PeerHandler implements Runnable {
         catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public synchronized byte[] readBytes(int len) throws IOException {
+        byte[] message = new byte[len];
+        int count = this.in.read(message);
+        while (count != len) {
+            int res = this.in.read(message, count, len - count);
+            if (res == -1) {
+                throw new IOException("Read error");
+            } else {
+                count += res;
+            }
+        }
+        return message;
     }
 
     public synchronized void send(byte[] obj) {

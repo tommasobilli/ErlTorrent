@@ -23,6 +23,7 @@ public class HandshakeMessage {
             stream.write(this.handshakeHeader.getBytes(StandardCharsets.UTF_8));
             stream.write(new byte[10]);
             stream.write(this.peerID.getBytes(StandardCharsets.UTF_8));
+            stream.write(new byte[32 - stream.size()]);
         }
         catch(Exception e) {
             e.printStackTrace();
