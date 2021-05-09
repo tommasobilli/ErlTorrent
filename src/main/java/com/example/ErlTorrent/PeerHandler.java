@@ -98,8 +98,6 @@ public class PeerHandler implements Runnable {
                                     if (requestindex != -1) {
                                         this.sendRequestMessage(requestindex);
                                     }
-                                } else {
-                                    System.out.println("nessuna richiesta");
                                 }
                             }
                         } else if (messageType == '6') {
@@ -117,13 +115,15 @@ public class PeerHandler implements Runnable {
                                     this.peerAdmin.getCompletedPieceCount());
                             this.peerAdmin.setRequestedInfo(pieceIndex, null);
                             this.peerAdmin.broadcastHave(pieceIndex);
+                            // Progress bar
+                            int totalPieces = this.peerAdmin.getPieceCount();
+                            int havePieces = this.peerAdmin.getCompletedPieceCount();
+                            progressBar(havePieces, totalPieces);
                             if (this.peerAdmin.getAvailabilityOf(this.peerAdmin.getPeerID()).cardinality() != this.peerAdmin
                                     .getPieceCount()) {
                                 int requestindex = this.peerAdmin.checkForRequested(this.endPeerID);
                                 if (requestindex != -1) {
                                     this.sendRequestMessage(requestindex);
-                                } else {
-                                    System.out.println("nessuna richiesta");
                                 }
                             } else {
                                 this.peerAdmin.getLogger().downloadComplete();
@@ -145,6 +145,36 @@ public class PeerHandler implements Runnable {
         }
         catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void progressBar(int done, int total) {
+        int size = 20;
+        String iconLeftBoundary = "Downloading file... [";
+        String iconDone = "#";
+        String iconRemain = " ";
+        String iconRightBoundary = "]";
+
+        if (done > total) {
+            throw new IllegalArgumentException();
+        }
+        int donePercent = (100 * done) / total;
+        int doneLength = size * donePercent / 100;
+
+        StringBuilder bar = new StringBuilder(iconLeftBoundary);
+        for (int i = 0; i < size; i++) {
+            if (i < doneLength) {
+                bar.append(iconDone);
+            } else {
+                bar.append(iconRemain);
+            }
+        }
+        bar.append(iconRightBoundary);
+
+        System.out.print("\r" + bar + " " + done + " of " + total + " pieces (" + donePercent + "%)");
+
+        if (done == total) {
+            System.out.print("\n");
         }
     }
 
