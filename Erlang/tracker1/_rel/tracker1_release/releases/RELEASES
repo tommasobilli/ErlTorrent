@@ -1,6 +1,6 @@
 %% coding: utf-8
 [{release,"tracker1_release","1","11.2.1",
-          [{kernel,"7.3","./lib/kernel-7.3"},
+          [{kernel,"7.3.1","./lib/kernel-7.3.1"},
            {stdlib,"3.14.2","./lib/stdlib-3.14.2"},
            {crypto,"4.9","./lib/crypto-4.9"},
            {cowlib,"2.7.3","./lib/cowlib-2.7.3"},
@@ -11,5 +11,5 @@
            {cowboy,"2.6.3","./lib/cowboy-2.6.3"},
            {tracker1,"rolling","./lib/tracker1-rolling"},
            {sasl,"4.0.2","./lib/sasl-4.0.2"},
-           {runtime_tools,"1.16","./lib/runtime_tools-1.16"}],
+           {runtime_tools,"1.16.1","./lib/runtime_tools-1.16.1"}],
           permanent}].

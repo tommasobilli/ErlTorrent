@@ -3,5 +3,14 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="svn" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Erlang/tracker1/deps/cowboy" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Erlang/tracker1/deps/cowlib" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Erlang/tracker1/deps/ranch" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Erlang/tracker2/deps/cowboy" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Erlang/tracker2/deps/cowlib" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Erlang/tracker2/deps/ranch" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Erlang/tracker3/deps/cowboy" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Erlang/tracker3/deps/cowlib" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Erlang/tracker3/deps/ranch" vcs="Git" />
   </component>
 </project>
