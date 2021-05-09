@@ -1,0 +1,92 @@
+@title jwt — Erlang JWT Library
+
+@doc
+
+<hr></hr>
+
+<a target="_blank" href="https://travis-ci.org/artemeff/jwt">
+  <img alt="Build Status" src="https://travis-ci.org/artemeff/jwt.svg?branch=master"/>
+</a>
+<a target="_blank" href="https://coveralls.io/github/artemeff/jwt?branch=master">
+  <img alt="Coverage Status" src="https://coveralls.io/repos/github/artemeff/jwt/badge.svg?branch=master"/>
+</a>
+<a target="_blank" href="https://hex.pm/packages/jwt">
+  <img alt="Hex.pm" src="https://img.shields.io/hexpm/v/jwt.svg"/>
+</a>
+
+<hr></hr>
+
+
+JWT is a simple authorization token <a target="_blank" href="https://jwt.io/">format</a> based on JSON.
+
+=== Installation ===
+
+If you use rebar (supports both 2 and 3 versions) or mix (Elixir):
+
+<pre lang="erlang">
+% in rebar.config for rebar3
+{deps, [{jwt}]}.
+
+% or for rebar2
+{deps, [{jwt, ".*", {git, "https://github.com/artemeff/jwt", {tag, "0.1.0"}}}]}
+</pre>
+
+<pre lang="elixir">
+% mix.exs
+def deps do
+  [{:jwt, "~> 0.1"}]
+end
+</pre>
+
+Or use it as git dependency.
+
+=== Usage example ===
+
+<pre lang="erlang"><![CDATA[
+%% Create JWT token
+> application:ensure_all_started(jwt).
+> Key = <<"supas3cri7">>.
+> Claims = [
+    {user_id, 42},
+    {user_name, <<"Bob">>}
+  ].
+> {ok, Token} = jwt:encode(<<"HS256">>, Claims, Key).
+%% or with expiration
+> ExpirationSeconds = 86400.
+> {ok, Token} = jwt:encode(<<"HS256">>, Claims, ExpirationSeconds, Key).
+
+%% Parse JWT token
+> {ok, Claims} = jwt:decode(Token, Key).
+
+
+
+%% Issuer specific keys workflow
+
+%% The encoder just knows about itself
+> Issuer = <<"iss1">>.
+> IssuerKey = <<"Issuer-1-Key">>.
+> Claims2 = [
+    {iss, Issuer},
+    {user_id, 42},
+    {user_name, <<"Bob">>}
+  ].
+> {ok, Token2} = jwt:encode(<<"HS256">>, Claims, ExpirationSeconds, IssuerKey).
+
+%% Decoder Workflow
+%% The decoder knows about all encoder keys (issuer specific)
+> IssuerKeyMapping = #{ Issuer => IssuerKey,
+                        <<"iss2">> => <<"Issuer2Key">>}.
+> {ok, Claims} = jwt:decode(Token, <<"default-key">>, IssuerKeyMapping).
+]]></pre>
+
+<hr></hr>
+
+== Contributing ==
+
+<ul>
+  <li>Fork it</li>
+  <li>Create your feature branch (`git checkout -b my-new-feature')</li>
+  <li>Commit your changes (`` git commit -am 'add some feature' '')</li>
+  <li>Push to the branch (`git push origin my-new-feature')</li>
+  <li>Create new Pull Request</li>
+</ul>
