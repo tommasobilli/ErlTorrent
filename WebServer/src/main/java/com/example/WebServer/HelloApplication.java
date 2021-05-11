@@ -1,4 +1,4 @@
-package com.example.ErlTorrent;
+package com.example.WebServer;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

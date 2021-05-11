@@ -7,10 +7,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="ErlTorrent" />
+        <module name="WebServer" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="ErlTorrent" target="1.8" />
+      <module name="WebServer" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

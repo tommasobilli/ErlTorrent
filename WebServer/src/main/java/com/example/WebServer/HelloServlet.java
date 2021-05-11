@@ -1,4 +1,4 @@
-package com.example.ErlTorrent;
+package com.example.WebServer;
 
 import java.io.*;
 import javax.servlet.http.*;
