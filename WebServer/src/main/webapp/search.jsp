@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Login/Sign up</title>
+    <title>Search file</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--===============================================================================================-->
@@ -29,77 +29,28 @@
     <!--===============================================================================================-->
 </head>
 <body>
-
-<div class="container">
-    <div class="row">
-        <div class="col-6">
-            <div class="limiter">
-                <div class="container-login100">
-                    <div class="wrap-login100 p-t-50 p-b-90">
-                        <form class="login100-form validate-form flex-sb flex-w">
-					<span class="login100-form-title p-b-51">
-						Login
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100 p-t-50 p-b-90" style="width: 1000px !important;">
+            <form class="login100-form validate-form flex-sb flex-w">
+					<span class="login100-form-title" style="padding-bottom: 30px !important;">
+						Search file
 					</span>
 
 
-                            <div class="wrap-input100 validate-input m-b-16" data-validate = "Username is required">
-                                <input class="input100" type="text" name="username" placeholder="Username">
-                                <span class="focus-input100"></span>
-                            </div>
-
-
-                            <div class="wrap-input100 validate-input m-b-16" data-validate = "Password is required">
-                                <input class="input100" type="password" name="pass" placeholder="Password">
-                                <span class="focus-input100"></span>
-                            </div>
-
-                            <div class="container-login100-form-btn m-t-17">
-                                <button class="login100-form-btn">
-                                    Login
-                                </button>
-                            </div>
-
-                        </form>
-                    </div>
+                <div class="wrap-input100 validate-input m-b-16" data-validate="Field is required">
+                    <input class="input100" type="text" name="search" placeholder="Search">
+                    <span class="focus-input100"></span>
                 </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="limiter">
-                <div class="container-login100">
-                    <div class="wrap-login100 p-t-50 p-b-90">
-                        <form class="login100-form validate-form flex-sb flex-w">
-					<span class="login100-form-title p-b-51">
-						Sign up
-					</span>
 
-
-                            <div class="wrap-input100 validate-input m-b-16" data-validate = "Username is required">
-                                <input class="input100" type="text" name="username_s" placeholder="Username">
-                                <span class="focus-input100"></span>
-                            </div>
-
-
-                            <div class="wrap-input100 validate-input m-b-16" data-validate = "Password is required">
-                                <input class="input100" type="password" name="pass_s" placeholder="Password">
-                                <span class="focus-input100"></span>
-                            </div>
-
-                            <div class="wrap-input100 validate-input m-b-16" data-validate = "Confirm password is required">
-                                <input class="input100" type="password" name="pass_confirm_s" placeholder="Confirm password">
-                                <span class="focus-input100"></span>
-                            </div>
-
-                            <div class="container-login100-form-btn m-t-17">
-                                <button class="login100-form-btn">
-                                    Sign up
-                                </button>
-                            </div>
-
-                        </form>
-                    </div>
+                <div class="container-login100-form-btn m-t-17">
+                    <button class="login100-form-btn">
+                        Search
+                    </button>
                 </div>
-            </div>
+
+
+            </form>
         </div>
     </div>
 </div>
