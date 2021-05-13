@@ -16,23 +16,22 @@ public class PeerServer implements Runnable {
     private String peerID;
     private ServerSocket listener;
     private PeerAdmin peerAdmin;
-    private boolean dead;
 
     public PeerServer(String peerID, ServerSocket listener, PeerAdmin admin) {
         this.peerID = peerID;
         this.listener = listener;
         this.peerAdmin = admin;
-        this.dead = false;
     }
 
     public void run() {
-        while (!this.dead) {
+        while (true) {
             try {
                 Socket neighbour = this.listener.accept();
                 //System.out.println(neighbour.getPort());
                 //possibile mettere un Executor con un Thread pool
                 PeerHandler neighbourHandler = new PeerHandler(neighbour, this.peerAdmin, false); //Accetta connessione dai vicini
-                new Thread(neighbourHandler).start();     //Associa un thread per ogni vicino
+                //new Thread(neighbourHandler).start();     //Associa un thread per ogni vicino
+                this.peerAdmin.pool_receivers.execute(neighbourHandler);
                 //String addr = neighbour.getInetAddress().toString();
                 //int port = neighbour.getPort();
             }

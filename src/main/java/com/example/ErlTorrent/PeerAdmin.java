@@ -6,6 +6,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.example.ErlTorrent.PeerHandler;
 import com.example.ErlTorrent.PeerInfoConfig;
@@ -16,10 +19,12 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import javax.json.stream.JsonParser;
+
 public class PeerAdmin {
     private String peerID;
-    private RemotePeerInfo myConfig;
-    private HashMap<String, RemotePeerInfo> peerInfoMap;
+    public RemotePeerInfo myConfig;
+    public HashMap<String, RemotePeerInfo> peerInfoMap;
     private ArrayList<String> peerList;
     private volatile HashMap<String, PeerHandler> joinedPeers;
     private volatile HashMap<String, Thread> joinedThreads;
@@ -32,8 +37,11 @@ public class PeerAdmin {
     private int pieceCount;
     private volatile RandomAccessFile fileRaf;
     private Thread serverThread;
-    private volatile Boolean iamDone;
-    private CommonConfig commonConfig;
+    public volatile Boolean iamDone;
+    public CommonConfig commonConfig;
+    HttpConnection conn = new HttpConnection();
+    public ExecutorService pool_receivers = Executors.newCachedThreadPool();
+    public ExecutorService pool_senders = Executors.newCachedThreadPool();
 
     public PeerAdmin() throws IOException, ParseException {
         this.peerInfoMap = new HashMap<>();
@@ -61,9 +69,11 @@ public class PeerAdmin {
 
     public void initPeer() {
         try {
-            // GET JSON from REST API
-            Object obj = new JSONParser().parse(new FileReader("peerList.json"));
-            JSONObject peerList = (JSONObject) obj;
+            // GET JSON from REST API ---------------------
+            JSONObject peerList = conn.make_GET_request(this.commonConfig.FileName);
+            //Object obj = new JSONParser().parse(new FileReader("peerList.json"));
+            //JSONObject peerList = (JSONObject) obj;
+            System.out.println(peerList);
             this.peerInfoConfig.loadConfigFile(peerList);
             this.pieceCount = this.calcPieceCount();    //calcola il numero di pezzi del file da ricchiedere
             this.requestedInfo = new String[this.pieceCount];
@@ -84,7 +94,31 @@ public class PeerAdmin {
             }
             this.initializePieceAvailability();
             this.startServer();
-            this.createNeighbourConnections();
+            if (this.peerInfoMap.get(this.myConfig.peerId).containsFile == 0) {
+                //ci entrano SOLO quelli che non hanno il file, cioè quelli a cui interessa la lista di peer dal server erlang
+                this.createNeighbourConnections();
+                while (true) {      //!iamdone
+                    Thread.sleep(2000);
+                    //get per richiedere la lista
+                    JSONObject peerList_new = conn.make_GET_request(this.commonConfig.FileName);
+                    HashMap<String, RemotePeerInfo> newPeerMap = new HashMap<>();
+                    newPeerMap = this.peerInfoConfig.get_new_peers(peerList_new);
+                    for (String key : newPeerMap.keySet()) {
+                        RemotePeerInfo peer = newPeerMap.get(key);
+                        Socket temp = new Socket(peer.peerAddress, peer.peerPort);
+                        PeerHandler p = new PeerHandler(temp, this, true);
+                        p.setEndPeerID(key);
+                        this.addJoinedPeer(p, key);
+                        //Thread t = new Thread(p);
+                        pool_receivers.execute(p);
+                        //this.addJoinedThreads(pid, t);
+                        //t.start();
+                        System.out.println("Creata nuova connessione");
+                        System.out.println("Started PeerHandler on " + peer.peerAddress + ":" + peer.peerPort + ".");
+                    }
+                    //craere le connessioni solo per quelli che non c'erano prima
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -109,9 +143,10 @@ public class PeerAdmin {
         // and then possibly returns a result to the requester.
         try {
             this.listener = new ServerSocket(this.myConfig.peerPort);  //Porta dove ascolto le richieste (associata con il mio indirizzo e porta)
-            this.server = new PeerServer(this.peerID, this.listener, this);
-            this.serverThread = new Thread(this.server);
-            this.serverThread.start();
+            //this.server = new PeerServer(this.peerID, this.listener, this);
+            //this.serverThread = new Thread(this.server);
+            //this.serverThread.start();
+            this.pool_receivers.execute(new PeerServer(this.peerID, this.listener, this));
             System.out.println("Started listening socket on port " + this.myConfig.peerPort + ".");
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,9 +164,10 @@ public class PeerAdmin {
                     PeerHandler p = new PeerHandler(temp, this, true);
                     p.setEndPeerID(pid);
                     this.addJoinedPeer(p, pid);
-                    Thread t = new Thread(p);
-                    this.addJoinedThreads(pid, t);
-                    t.start();
+                    //Thread t = new Thread(p);
+                    pool_receivers.execute(p);
+                    //this.addJoinedThreads(pid, t);
+                    //t.start();
                     System.out.println("Started PeerHandler on " + peer.peerAddress + ":" + peer.peerPort + ".");
                 }
             }
@@ -173,7 +209,7 @@ public class PeerAdmin {
 
     public synchronized void broadcastHave(int pieceIndex) {
         for (String key : this.joinedPeers.keySet()) {
-            if (this.peerInfoMap.get(key).containsFile == 0)
+            if (peerInfoMap.get(key).containsFile == 1)
                 this.joinedPeers.get(key).sendHaveMessage(pieceIndex);
         }
     }
@@ -270,7 +306,7 @@ public class PeerAdmin {
         return this.piecesAvailability.get(this.peerID).cardinality();
     }
 
-    public synchronized boolean checkIfAllPeersAreDone() {
+    public synchronized boolean checkIfAllPeersAreDone() {   //controlla se tutti hanno il file
         for (String peer : this.piecesAvailability.keySet()) {
             if (this.piecesAvailability.get(peer).cardinality() != this.pieceCount) {
                 return false;
@@ -290,14 +326,14 @@ public class PeerAdmin {
     public synchronized Thread getServerThread() {
         return this.serverThread;
     }
-
+    /*
     public synchronized Boolean checkIfDone() {
         return this.iamDone;
     }
-
+    */
     public synchronized void closeHandlers() {
         for (String peer : this.joinedThreads.keySet()) {
-            this.joinedThreads.get(peer).stop();
+            this.joinedThreads.get(peer).interrupt();
         }
     }
 
@@ -305,8 +341,13 @@ public class PeerAdmin {
         try {
             this.getRefFile().close();
             this.getLogger().closeLogger();
-            this.getListener().close();
-            this.getServerThread().stop();
+            //this.getListener().close();
+            //this.getServerThread().interrupt(); //interrupt???
+            //for (String key : this.joinedPeers.keySet())  //chiude i socket degli handler connessi a peer
+               //this.joinedPeers.get(key).getListener().close();
+            //pool_senders.shutdownNow();
+            //pool_receivers.shutdownNow();
+            //this.closeHandlers();  //chiude tutti gli handler creati conessi con i vari peer
             this.iamDone = true;
         }
         catch (Exception e) {

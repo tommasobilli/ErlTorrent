@@ -60,92 +60,102 @@ public class PeerHandler implements Runnable {
             this.out.write(msg);
             this.out.flush();
             System.out.println("Handshake message sent.");
-            while (true) {
-                if (!this.connectionEstablished) {
-                    byte[] response = readBytes(40);
-                    System.out.println("Handshake message received.");
-                    this.processHandShakeMessage(response);
-                    if (this.peerAdmin.hasFile() || this.peerAdmin.getAvailabilityOf(this.peerAdmin.getPeerID()).cardinality() > 0) {
-                        this.sendBitField();   //se ho qualche chunk lo avverto
-                    }
-                } else {
-                    while (this.in.available() > 0) {
-                        int respLen = this.in.readInt();
-                        byte[] response = readBytes(respLen);
-                        char messageType = (char) response[0]; //vedere il formato dei messaggi
-                        ActualMessage am = new ActualMessage();
-                        am.readActualMessage(respLen, response);
-                        if (messageType == '4') {
-                            // Handles Have Message
-                            int pieceIndex = am.getPieceIndexFromPayload();
-                            this.peerAdmin.updatePieceAvailability(this.endPeerID, pieceIndex);
-                            if (this.peerAdmin.checkIfAllPeersAreDone()) {
-                                this.peerAdmin.cancelChokes();
-                            }
+            //while (true) {
+            //if (!this.connectionEstablished) {
+            byte[] response = readBytes(40);
+            System.out.println("Handshake message received.");
+            this.processHandShakeMessage(response);
+            if (this.peerAdmin.hasFile() || this.peerAdmin.getAvailabilityOf(this.peerAdmin.getPeerID()).cardinality() > 0)
+                this.sendBitField();   //se ho qualche chunk lo avverto
+                //    }
+                //} else {
+                while (true) {   //this.in.available() > 0
+                    int respLen = this.in.readInt();
+                    response = readBytes(respLen);
+                    char messageType = (char) response[0]; //vedere il formato dei messaggi
+                    ActualMessage am = new ActualMessage();
+                    am.readActualMessage(respLen, response);
+                    if (messageType == '4') {
+                        // Handles Have Message
+                        int pieceIndex = am.getPieceIndexFromPayload();
+                        //this.peerAdmin.updatePieceAvailability(this.endPeerID, pieceIndex);
+                        //if (this.peerAdmin.getAvailabilityOf(this.endPeerID).cardinality() == this.peerAdmin
+                        //        .getPieceCount()) {
+                        System.out.println("receiving have");
+                        //this.peerAdmin.cancelChokes(); ---- Da rivedere
+                        this.peerAdmin.getLogger().receiveHave(this.endPeerID, pieceIndex);
+                    } else if (messageType == '5') {
+                        // Handles BitField message
+                        BitSet bset = am.getBitFieldMessage();
+                        this.processBitFieldMessage(bset);
+                        if (!this.peerAdmin.hasFile()) {
                             if (this.peerAdmin.checkIfInterested(this.endPeerID)) {
-
-                            } else {
-
-                            }
-                            this.peerAdmin.getLogger().receiveHave(this.endPeerID, pieceIndex);
-                        } else if (messageType == '5') {
-                            // Handles BitField message
-                            BitSet bset = am.getBitFieldMessage();
-                            this.processBitFieldMessage(bset);
-                            if (!this.peerAdmin.hasFile()) {
-                                if (this.peerAdmin.checkIfInterested(this.endPeerID)) {
-                                    int requestindex = this.peerAdmin.checkForRequested(this.endPeerID);
-                                    if (requestindex != -1) {
-                                        this.sendRequestMessage(requestindex);
-                                    }
-                                }
-                            }
-                        } else if (messageType == '6') {
-                            // Handles Request Message
-                            int pieceIndex = am.getPieceIndexFromPayload();
-                            this.sendPieceMessage(pieceIndex, this.peerAdmin.readFromFile(pieceIndex));
-                        } else if (messageType == '7') {
-                            // Handle Piece Message
-                            int pieceIndex = am.getPieceIndexFromPayload();
-                            byte[] piece = am.getPieceFromPayload();
-                            this.peerAdmin.writeToFile(piece, pieceIndex);
-                            this.peerAdmin.updatePieceAvailability(this.peerAdmin.getPeerID(), pieceIndex);
-                            boolean alldone = this.peerAdmin.checkIfAllPeersAreDone();
-                            this.peerAdmin.getLogger().downloadPiece(this.endPeerID, pieceIndex,
-                                    this.peerAdmin.getCompletedPieceCount());
-                            this.peerAdmin.setRequestedInfo(pieceIndex, null);
-                            this.peerAdmin.broadcastHave(pieceIndex);
-                            // Progress bar
-                            int totalPieces = this.peerAdmin.getPieceCount();
-                            int havePieces = this.peerAdmin.getCompletedPieceCount();
-                            progressBar(havePieces, totalPieces);
-                            if (this.peerAdmin.getAvailabilityOf(this.peerAdmin.getPeerID()).cardinality() != this.peerAdmin
-                                    .getPieceCount()) {
                                 int requestindex = this.peerAdmin.checkForRequested(this.endPeerID);
                                 if (requestindex != -1) {
                                     this.sendRequestMessage(requestindex);
                                 }
-                            } else {
-                                this.peerAdmin.getLogger().downloadComplete();
-                                if (alldone) {
-                                    System.out.println("Download complete.");
-                                    this.peerAdmin.cancelChokes();
-                                }
-
+                            }
+                        }
+                    } else if (messageType == '6') {
+                        // Handles Request Message
+                        int pieceIndex = am.getPieceIndexFromPayload();
+                        this.sendPieceMessage(pieceIndex, this.peerAdmin.readFromFile(pieceIndex));
+                    } else if (messageType == '7') {
+                        // Handle Piece Message
+                        int pieceIndex = am.getPieceIndexFromPayload();
+                        byte[] piece = am.getPieceFromPayload();
+                        this.peerAdmin.writeToFile(piece, pieceIndex);
+                        boolean first_piece = this.checkIfFirstPiece();
+                        if (first_piece) {
+                            this.peerAdmin.conn.make_POST_request(this.peerAdmin);
+                        }
+                        this.peerAdmin.updatePieceAvailability(this.peerAdmin.getPeerID(), pieceIndex);
+                        //boolean alldone = this.peerAdmin.checkIfAllPeersAreDone();
+                        this.peerAdmin.getLogger().downloadPiece(this.endPeerID, pieceIndex,
+                                this.peerAdmin.getCompletedPieceCount());
+                        this.peerAdmin.setRequestedInfo(pieceIndex, null);
+                        // Progress bar
+                        int totalPieces = this.peerAdmin.getPieceCount();
+                        int havePieces = this.peerAdmin.getCompletedPieceCount();
+                        progressBar(havePieces, totalPieces);
+                        if (this.peerAdmin.getAvailabilityOf(this.peerAdmin.getPeerID()).cardinality() != this.peerAdmin
+                                .getPieceCount()) {
+                            int requestindex = this.peerAdmin.checkForRequested(this.endPeerID);
+                            if (requestindex != -1) {
+                                this.sendRequestMessage(requestindex);
                             }
                         } else {
-                            System.out.println("Received other message");
+                            this.peerAdmin.getLogger().downloadComplete();
+                            //if (alldone) {
+                            this.peerAdmin.broadcastHave(pieceIndex); //manda l'have message solo alla fine
+                            System.out.println("Download complete.");
+                            this.peerAdmin.peerInfoMap.get(this.peerAdmin.myConfig.peerId).containsFile = 1;
+                            this.peerAdmin.cancelChokes();
+                            peerAdmin.iamDone = true;
+                            break;
+                            //}
+
                         }
+                    } else {
+                        System.out.println("Received other message");
                     }
+                    // }
                 }
+                //}
+        }
+        catch(SocketException e){
+                System.out.println("Socket exception");
             }
-        }
-        catch (SocketException e) {
-            System.out.println("Socket exception");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+        catch(Exception e){
+                e.printStackTrace();
+            }
+    }
+
+    public boolean checkIfFirstPiece () {
+        BitSet myAvailability = this.peerAdmin.getAvailabilityOf(this.peerAdmin.getPeerID());
+        if (myAvailability.isEmpty())
+            return true;
+        else return false;
     }
 
     public static void progressBar(int done, int total) {

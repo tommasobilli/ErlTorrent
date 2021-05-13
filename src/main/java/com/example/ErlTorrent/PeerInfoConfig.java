@@ -27,10 +27,31 @@ public class PeerInfoConfig {
             String pid = (String) peer.get("pid");
             String address = (String) peer.get("address");
             String port = (String) peer.get("port");
-            String containsFile = (String) peer.get("containsFile");
+            String containsFile = "1";
             this.peerInfoMap.put(pid, new RemotePeerInfo(pid, address, port, containsFile));
             this.peerList.add(pid);
         }
+    }
+
+     public HashMap<String, RemotePeerInfo> get_new_peers(JSONObject peerList) {
+         HashMap<String, RemotePeerInfo> newPeerMap = new HashMap<>();
+         JSONArray peers = (JSONArray) peerList.get("peers");
+         boolean present = false;
+         for (JSONObject peer : (Iterable<JSONObject>) peers) {
+             String pid = (String) peer.get("pid");
+             for (String key : this.peerInfoMap.keySet()) {
+                 if (pid.equals(this.peerInfoMap.get(key).peerId))
+                     present = true;
+             }
+             if (present) continue;
+             String address = (String) peer.get("address");
+             String port = (String) peer.get("port");
+             String containsFile = "1";
+             newPeerMap.put(pid, new RemotePeerInfo(pid, address, port, containsFile));
+             this.peerInfoMap.put(pid, new RemotePeerInfo(pid, address, port, containsFile));
+             this.peerList.add(pid);
+         }
+         return newPeerMap;
     }
 
     public RemotePeerInfo getPeerConfig(String peerID) {
