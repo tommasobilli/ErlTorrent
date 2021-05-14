@@ -1,5 +1,8 @@
 package com.example.WebServer;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
 import com.mongodb.TransactionOptions;
@@ -25,7 +28,6 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 public class Dao {
-    private MongoClient mongoClient;
 
     private MongoCollection<Document> files;
     private MongoCollection<Document> trackers;
@@ -33,7 +35,7 @@ public class Dao {
 
     private Dao() {
         try {
-            mongoClient = MongoClients.create(
+            MongoClient mongoClient = MongoClients.create(
                     "mongodb+srv://studenti:Dido1996@cluster0.pcezh.mongodb.net/myFirstDatabase?authSource=admin&replicaSet=Cluster0-shard-0&w=majority&readPreference=primary&retryWrites=true&ssl=true");
             MongoDatabase database = mongoClient.getDatabase("WebTorrent");
             files = database.getCollection("files");
@@ -53,9 +55,41 @@ public class Dao {
         return MongoSingleton.INSTANCE;
     }
 
+    public Document getTrackerInfo(String filename) {
+        try (MongoCursor<Document> cursor = trackers
+                .find(Filters.eq("files", filename)).projection(Projections.fields(Projections
+                        .include("address", "port"), Projections.exclude("_id")))
+                .iterator()) {
+            if (cursor.hasNext()) {
+                return cursor.next();
+            } else {
+                return null;
+            }
+        }
+    }
+
+    public List<Document> searchFile(String query) {
+        List<Document> result = new ArrayList<>();
+        try (MongoCursor<Document> cursor = files
+                .find(Filters.text(query)).projection(Projections.fields(Projections
+                        .include("filename", "size"), Projections.exclude("_id")))
+                .iterator()) {
+            while (cursor.hasNext()) {
+                result.add(cursor.next());
+            }
+            return result;
+        }
+    }
+
+
     public static void main(String[] args) {
         Dao dao = Dao.getInstance();
-        System.out.println(dao.users.find().first());
+        Document result = dao.getTrackerInfo("Pulp Fiction");
+        System.out.println(result.get("address"));
+        List<Document> result2 = dao.searchFile("Pulp");
+        for (Document d : result2) {
+            System.out.println(d.get("size"));
+        }
     }
 
 }
