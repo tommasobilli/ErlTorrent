@@ -97,7 +97,7 @@ public class PeerAdmin {
             if (this.peerInfoMap.get(this.myConfig.peerId).containsFile == 0) {
                 //ci entrano SOLO quelli che non hanno il file, cioè quelli a cui interessa la lista di peer dal server erlang
                 this.createNeighbourConnections();
-                while (true) {      //!iamdone
+                while (!this.iamDone) {      //!iamdone
                     Thread.sleep(2000);
                     //get per richiedere la lista
                     JSONObject peerList_new = conn.make_GET_request(this.commonConfig.FileName);
@@ -110,7 +110,7 @@ public class PeerAdmin {
                         p.setEndPeerID(key);
                         this.addJoinedPeer(p, key);
                         //Thread t = new Thread(p);
-                        pool_receivers.execute(p);
+                        pool_senders.execute(p);
                         //this.addJoinedThreads(pid, t);
                         //t.start();
                         System.out.println("Creata nuova connessione");
@@ -165,7 +165,7 @@ public class PeerAdmin {
                     p.setEndPeerID(pid);
                     this.addJoinedPeer(p, pid);
                     //Thread t = new Thread(p);
-                    pool_receivers.execute(p);
+                    pool_senders.execute(p);
                     //this.addJoinedThreads(pid, t);
                     //t.start();
                     System.out.println("Started PeerHandler on " + peer.peerAddress + ":" + peer.peerPort + ".");
@@ -341,12 +341,12 @@ public class PeerAdmin {
         try {
             this.getRefFile().close();
             this.getLogger().closeLogger();
-            //this.getListener().close();
+            this.getListener().close();
             //this.getServerThread().interrupt(); //interrupt???
-            //for (String key : this.joinedPeers.keySet())  //chiude i socket degli handler connessi a peer
-               //this.joinedPeers.get(key).getListener().close();
-            //pool_senders.shutdownNow();
-            //pool_receivers.shutdownNow();
+            for (String key : this.joinedPeers.keySet())  //chiude i socket degli handler connessi a peer
+               this.joinedPeers.get(key).getListener().close();
+            pool_senders.shutdownNow();
+            pool_receivers.shutdownNow();
             //this.closeHandlers();  //chiude tutti gli handler creati conessi con i vari peer
             this.iamDone = true;
         }

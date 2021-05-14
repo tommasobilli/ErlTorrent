@@ -82,7 +82,7 @@ public class PeerHandler implements Runnable {
                         //if (this.peerAdmin.getAvailabilityOf(this.endPeerID).cardinality() == this.peerAdmin
                         //        .getPieceCount()) {
                         System.out.println("receiving have");
-                        //this.peerAdmin.cancelChokes(); ---- Da rivedere
+                        //this.peerAdmin.cancelChokes(); // ---- Da rivedere
                         this.peerAdmin.getLogger().receiveHave(this.endPeerID, pieceIndex);
                     } else if (messageType == '5') {
                         // Handles BitField message
@@ -127,11 +127,12 @@ public class PeerHandler implements Runnable {
                         } else {
                             this.peerAdmin.getLogger().downloadComplete();
                             //if (alldone) {
-                            this.peerAdmin.broadcastHave(pieceIndex); //manda l'have message solo alla fine
+                            //this.peerAdmin.broadcastHave(pieceIndex); //manda l'have message solo alla fine
                             System.out.println("Download complete.");
                             this.peerAdmin.peerInfoMap.get(this.peerAdmin.myConfig.peerId).containsFile = 1;
                             this.peerAdmin.cancelChokes();
                             peerAdmin.iamDone = true;
+                            System.exit(0);
                             break;
                             //}
 
@@ -143,12 +144,7 @@ public class PeerHandler implements Runnable {
                 }
                 //}
         }
-        catch(SocketException e){
-                System.out.println("Socket exception");
-            }
-        catch(Exception e){
-                e.printStackTrace();
-            }
+        catch(Exception e){}
     }
 
     public boolean checkIfFirstPiece () {
