@@ -105,22 +105,27 @@ public class PeerAdmin {
                     newPeerMap = this.peerInfoConfig.get_new_peers(peerList_new);
                     for (String key : newPeerMap.keySet()) {
                         RemotePeerInfo peer = newPeerMap.get(key);
-                        Socket temp = new Socket(peer.peerAddress, peer.peerPort);
-                        PeerHandler p = new PeerHandler(temp, this, true);
-                        p.setEndPeerID(key);
-                        this.addJoinedPeer(p, key);
-                        //Thread t = new Thread(p);
-                        pool_senders.execute(p);
-                        //this.addJoinedThreads(pid, t);
-                        //t.start();
-                        System.out.println("Creata nuova connessione");
-                        System.out.println("Started PeerHandler on " + peer.peerAddress + ":" + peer.peerPort + ".");
+                        try {
+                            Socket temp = new Socket(peer.peerAddress, peer.peerPort);
+                            PeerHandler p = new PeerHandler(temp, this, true);
+                            p.setEndPeerID(key);
+                            this.addJoinedPeer(p, key);
+                            //Thread t = new Thread(p);
+                            pool_senders.execute(p);
+                            //this.addJoinedThreads(pid, t);
+                            //t.start();
+                            System.out.println("Creata nuova connessione");
+                            System.out.println("Started PeerHandler on " + peer.peerAddress + ":" + peer.peerPort + ".");
+                        } catch (Exception e) {
+                            this.peerInfoMap.remove(key);
+                            System.out.println("Rimosso peer dalla peerinfomap");
+                        }
                     }
                     //craere le connessioni solo per quelli che non c'erano prima
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -153,28 +158,30 @@ public class PeerAdmin {
         }
     }
 
-    public void createNeighbourConnections() {  //il peer crea connessioni con i vicini che sono nella lista
+    public void createNeighbourConnections() throws InterruptedException {  //il peer crea connessioni con i vicini che sono nella lista
         // viene creato un thread per ogni vicino con cui stabilisco una connessione
-        try {
+
             Thread.sleep(5000);
             for (String pid : this.peerList) {
                 if (!pid.equals(this.peerID)) {
                     RemotePeerInfo peer = this.peerInfoMap.get(pid);
-                    Socket temp = new Socket(peer.peerAddress, peer.peerPort);
-                    PeerHandler p = new PeerHandler(temp, this, true);
-                    p.setEndPeerID(pid);
-                    this.addJoinedPeer(p, pid);
-                    //Thread t = new Thread(p);
-                    pool_senders.execute(p);
-                    //this.addJoinedThreads(pid, t);
-                    //t.start();
-                    System.out.println("Started PeerHandler on " + peer.peerAddress + ":" + peer.peerPort + ".");
+                    try {
+                        Socket temp = new Socket(peer.peerAddress, peer.peerPort);
+                        PeerHandler p = new PeerHandler(temp, this, true);
+                        p.setEndPeerID(pid);
+                        this.addJoinedPeer(p, pid);
+                        //Thread t = new Thread(p);
+                        pool_senders.execute(p);
+                        //this.addJoinedThreads(pid, t);
+                        //t.start();
+                        System.out.println("Started PeerHandler on " + peer.peerAddress + ":" + peer.peerPort + ".");
+                    } catch (Exception e) {
+                        this.peerInfoMap.remove(pid);
+                        System.out.println("Rimosso peer dalla peerinfomap");
+                    }
                 }
             }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+
     }
 
     public synchronized void writeToFile(byte[] data, int pieceindex) {

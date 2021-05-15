@@ -123,6 +123,9 @@ public class PeerHandler implements Runnable {
                             int requestindex = this.peerAdmin.checkForRequested(this.endPeerID);
                             if (requestindex != -1) {
                                 this.sendRequestMessage(requestindex);
+                            } else {
+                                BitSet myAvailablePieces = this.peerAdmin.getAvailabilityOf(this.peerAdmin.getPeerID());
+                                this.sendRequestMessage(myAvailablePieces.nextClearBit(0));
                             }
                         } else {
                             this.peerAdmin.getLogger().downloadComplete();
@@ -144,7 +147,30 @@ public class PeerHandler implements Runnable {
                 }
                 //}
         }
-        catch(Exception e){}
+        catch(Exception e) {
+            try {
+                this.listener.close();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+            String address = this.peerAdmin.peerInfoMap.get(this.endPeerID).peerAddress;
+            int port = this.peerAdmin.peerInfoMap.get(this.endPeerID).peerPort;
+            boolean connectionCreated = false;
+            while (!connectionCreated) {
+                try {
+                    Thread.sleep(5000);
+                    this.listener = new Socket(address, port);
+                    if (this.listener.isConnected()) {
+                        connectionCreated = true;
+                        initStreams();
+                        run();
+                    }
+
+                } catch (IOException | InterruptedException ioException) {
+
+                }
+            }
+        }
     }
 
     public boolean checkIfFirstPiece () {
