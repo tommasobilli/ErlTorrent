@@ -97,7 +97,7 @@ public class PeerAdmin {
             if (this.peerInfoMap.get(this.myConfig.peerId).containsFile == 0) {
                 //ci entrano SOLO quelli che non hanno il file, cioè quelli a cui interessa la lista di peer dal server erlang
                 this.createNeighbourConnections();
-                while (!this.iamDone) {      //!iamdone
+                while (!this.checkIfDone()) {      //!iamdone
                     Thread.sleep(2000);
                     //get per richiedere la lista
                     JSONObject peerList_new = conn.make_GET_request(this.commonConfig.FileName);
@@ -112,12 +112,12 @@ public class PeerAdmin {
                             this.addJoinedPeer(p, key);
                             //Thread t = new Thread(p);
                             pool_senders.execute(p);
-                            //this.addJoinedThreads(pid, t);
+                            //this.addJoinedThreads(key, p);
                             //t.start();
                             System.out.println("Creata nuova connessione");
                             System.out.println("Started PeerHandler on " + peer.peerAddress + ":" + peer.peerPort + ".");
                         } catch (Exception e) {
-                            this.peerInfoMap.remove(key);
+                            //this.peerInfoMap.remove(key);
                             System.out.println("Rimosso peer dalla peerinfomap");
                         }
                     }
@@ -214,10 +214,10 @@ public class PeerAdmin {
         return new byte[0];
     }
 
-    public synchronized void broadcastHave(int pieceIndex) {
+    public synchronized void broadcastHave() { //non necessaria
         for (String key : this.joinedPeers.keySet()) {
             if (peerInfoMap.get(key).containsFile == 1)
-                this.joinedPeers.get(key).sendHaveMessage(pieceIndex);
+                this.joinedPeers.get(key).sendHaveMessage();
         }
     }
 
@@ -277,13 +277,17 @@ public class PeerAdmin {
         return -1;
     }
 
-    public synchronized void resetRequested(String endpeerid) {
-        for (int i = 0; i < this.requestedInfo.length; i++) {
-            if (this.requestedInfo[i] != null && this.requestedInfo[i].compareTo(endpeerid) == 0) {
-                setRequestedInfo(i, null);
-            }
+    public synchronized int checkHaveAll(String endpeerid) {
+        BitSet end = this.getAvailabilityOf(endpeerid);
+        BitSet mine = this.getAvailabilityOf(this.peerID);
+        int miss_index = mine.nextClearBit(0);
+        if (end.get(miss_index) == true) {
+            setRequestedInfo(miss_index, endpeerid);
+            return miss_index;
         }
+        return -1;
     }
+
 
     public String getPeerID() {
         return this.peerID;
@@ -313,15 +317,6 @@ public class PeerAdmin {
         return this.piecesAvailability.get(this.peerID).cardinality();
     }
 
-    public synchronized boolean checkIfAllPeersAreDone() {   //controlla se tutti hanno il file
-        for (String peer : this.piecesAvailability.keySet()) {
-            if (this.piecesAvailability.get(peer).cardinality() != this.pieceCount) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public synchronized RandomAccessFile getRefFile() {
         return this.fileRaf;
     }
@@ -333,11 +328,15 @@ public class PeerAdmin {
     public synchronized Thread getServerThread() {
         return this.serverThread;
     }
-    /*
+
     public synchronized Boolean checkIfDone() {
         return this.iamDone;
     }
-    */
+
+    public synchronized void setIamDone() {
+        this.iamDone = true;
+    }
+
     public synchronized void closeHandlers() {
         for (String peer : this.joinedThreads.keySet()) {
             this.joinedThreads.get(peer).interrupt();
@@ -346,14 +345,15 @@ public class PeerAdmin {
 
     public synchronized void cancelChokes() {
         try {
-            this.getRefFile().close();
+            //this.getRefFile().close();
             this.getLogger().closeLogger();
-            this.getListener().close();
+            //this.getListener().close(); //chiudo il server del peer
             //this.getServerThread().interrupt(); //interrupt???
-            for (String key : this.joinedPeers.keySet())  //chiude i socket degli handler connessi a peer
-               this.joinedPeers.get(key).getListener().close();
-            pool_senders.shutdownNow();
-            pool_receivers.shutdownNow();
+            //for (String key : this.joinedPeers.keySet())
+                //if (!this.joinedPeers.get(key).getListener().isClosed())//chiude i socket degli handler connessi a peer
+                    //this.joinedPeers.get(key).getListener().close();
+            pool_senders.shutdownNow(); //chiudo tutti i thread
+            //pool_receivers.shutdownNow();
             //this.closeHandlers();  //chiude tutti gli handler creati conessi con i vari peer
             this.iamDone = true;
         }
