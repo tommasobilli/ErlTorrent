@@ -31,7 +31,7 @@ public class PeerServer implements Runnable {
                 //possibile mettere un Executor con un Thread pool
                 PeerHandler neighbourHandler = new PeerHandler(neighbour, this.peerAdmin, false); //Accetta connessione dai vicini
                 //new Thread(neighbourHandler).start();     //Associa un thread per ogni vicino
-                this.peerAdmin.pool_receivers.execute(neighbourHandler);
+                this.peerAdmin.pool_threads.execute(neighbourHandler);
                 //String addr = neighbour.getInetAddress().toString();
                 //int port = neighbour.getPort();
             }
