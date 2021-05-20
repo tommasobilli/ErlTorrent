@@ -36,23 +36,34 @@
             <div class="limiter">
                 <div class="container-login100">
                     <div class="wrap-login100 p-t-50 p-b-90">
-                        <form class="login100-form validate-form flex-sb flex-w" method="post" action="LoginServlet">
-                            <span class="login100-form-title p-b-51">
-                                Login
-                            </span>
+                        <form class="login100-form validate-form flex-sb flex-w">
+					<span class="login100-form-title p-b-51">
+						Sign up
+					</span>
+
+
                             <div class="wrap-input100 validate-input m-b-16" data-validate = "Username is required">
-                                <input class="input100" type="text" name="username" placeholder="Username">
+                                <input class="input100" type="text" name="username_s" placeholder="Username">
                                 <span class="focus-input100"></span>
                             </div>
+
+
                             <div class="wrap-input100 validate-input m-b-16" data-validate = "Password is required">
-                                <input class="input100" type="password" name="pass" placeholder="Password">
+                                <input class="input100" type="password" name="pass_s" placeholder="Password">
                                 <span class="focus-input100"></span>
                             </div>
+
+                            <div class="wrap-input100 validate-input m-b-16" data-validate = "Confirm password is required">
+                                <input class="input100" type="password" name="pass_confirm_s" placeholder="Confirm password">
+                                <span class="focus-input100"></span>
+                            </div>
+
                             <div class="container-login100-form-btn m-t-17">
-                                <button class="login100-form-btn" type="submit">
-                                    Login
+                                <button class="login100-form-btn">
+                                    Sign up
                                 </button>
                             </div>
+
                         </form>
                     </div>
                 </div>

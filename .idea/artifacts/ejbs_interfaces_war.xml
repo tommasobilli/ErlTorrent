@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="ejbs-interfaces:war">
+    <output-path>$PROJECT_DIR$/WebServer/ejbs-interfaces/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>ejbs-interfaces</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="ejbs-interfaces-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="ejbs-interfaces:war exploded" />
+    </root>
+  </artifact>
+</component>

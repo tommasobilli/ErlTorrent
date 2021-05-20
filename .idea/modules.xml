@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ErlTorrent.iml" filepath="$PROJECT_DIR$/ErlTorrent.iml" />
       <module fileurl="file://$PROJECT_DIR$/WebServer/WebServer.iml" filepath="$PROJECT_DIR$/WebServer/WebServer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WebServer/ejbs/ejbs.iml" filepath="$PROJECT_DIR$/WebServer/ejbs/ejbs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WebServer/ejbs-interfaces/ejbs-interfaces.iml" filepath="$PROJECT_DIR$/WebServer/ejbs-interfaces/ejbs-interfaces.iml" />
     </modules>
   </component>
 </project>
