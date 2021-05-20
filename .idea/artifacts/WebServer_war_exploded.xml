@@ -20,6 +20,18 @@
           <element id="library" level="project" name="Maven: org.mongodb:mongodb-driver-core:4.2.3" />
           <element id="library" level="project" name="Maven: org.slf4j:slf4j-simple:2.0.0-alpha0" />
           <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:2.0.0-alpha0" />
+          <element id="archive" name="ejbs-1.0-SNAPSHOT.jar">
+            <element id="module-output" name="ejbs" />
+          </element>
+          <element id="library" level="project" name="Maven: io.github.cdimascio:java-dotenv:5.2.2" />
+          <element id="library" level="project" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:1.4.0" />
+          <element id="library" level="project" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.4.0" />
+          <element id="library" level="project" name="Maven: org.jetbrains:annotations:13.0" />
+          <element id="archive" name="ejbs-interfaces-1.0-SNAPSHOT.jar">
+            <element id="module-output" name="ejbs-interfaces" />
+          </element>
+          <element id="library" level="project" name="Maven: javax.servlet:jstl:1.2" />
+          <element id="library" level="project" name="Maven: org.mindrot:jbcrypt:0.4" />
         </element>
       </element>
       <element id="directory" name="META-INF">

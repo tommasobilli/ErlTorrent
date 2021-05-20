@@ -53,8 +53,8 @@
                                 <span class="focus-input100"></span>
                             </div>
 
-                            <div class="wrap-input100 validate-input m-b-16" data-validate = "Confirm password is required">
-                                <input class="input100" type="password" name="pass_confirm_s" placeholder="Confirm password">
+                            <div class="wrap-input100 validate-input m-b-16" data-validate = "Confirm utils.password is required">
+                                <input class="input100" type="password" name="pass_confirm_s" placeholder="Confirm utils.password">
                                 <span class="focus-input100"></span>
                             </div>
 
