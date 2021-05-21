@@ -54,6 +54,9 @@
                                 </button>
                             </div>
                         </form>
+                        <div class="container-login100-form-btn m-t-17">
+                            <a class="login100-form-btn" href="signup.jsp">Signup</a>
+                        </div>
                         <c:if test="${not empty errorMessage}">
                             <div class="alert m-t-17">
                                 <span class="closebtn">&times;</span>

@@ -40,30 +40,23 @@
 					<span class="login100-form-title p-b-51">
 						Sign up
 					</span>
-
-
                             <div class="wrap-input100 validate-input m-b-16" data-validate = "Username is required">
                                 <input class="input100" type="text" name="username_s" placeholder="Username">
                                 <span class="focus-input100"></span>
                             </div>
-
-
                             <div class="wrap-input100 validate-input m-b-16" data-validate = "Password is required">
                                 <input class="input100" type="password" name="pass_s" placeholder="Password">
                                 <span class="focus-input100"></span>
                             </div>
-
                             <div class="wrap-input100 validate-input m-b-16" data-validate = "Confirm utils.password is required">
                                 <input class="input100" type="password" name="pass_confirm_s" placeholder="Confirm utils.password">
                                 <span class="focus-input100"></span>
                             </div>
-
                             <div class="container-login100-form-btn m-t-17">
                                 <button class="login100-form-btn">
                                     Sign up
                                 </button>
                             </div>
-
                         </form>
                     </div>
                 </div>
