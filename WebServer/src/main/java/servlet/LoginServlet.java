@@ -19,7 +19,12 @@ public class LoginServlet extends HttpServlet {
     IUserBean userBean;
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Logger logger = Logger.getLogger(getClass().getName());
         logger.info("[DEBUG] inside the service method of LoginServlet");
 
@@ -33,17 +38,20 @@ public class LoginServlet extends HttpServlet {
                 throw new IncorrectPasswordException(username);
             }
 
-            // DA QUI IN POI L'UTENTE È LOGGATO DUNQUE VIENE REINDIRIZZATO ALLA PAGINA IN CUI HA DUE SCELTE
-            // 1. Scaricare un nuovo file
-            // 2. Uplodare un nuovo file => Iscriversi quindi ad un nuovo tracker.
-
+            HttpSession session = req.getSession(true);
+            session.setAttribute("username", user.getUsername());
+            resp.sendRedirect("home.jsp");
 
         } catch (UserNotFoundException| IncorrectPasswordException e) {
             logger.info("[DEBUG] LoginServlet EXCEPTION: " + e.getMessage());
-            req.setAttribute("errorMessage", "Incorrect username and/or password");
-            getServletContext().getRequestDispatcher("/index.jsp").forward(req, resp);
-        } catch(Exception e) {
-            logger.info("[DEBUG] UNKNOWN EXCEPTION: " + e.getMessage());
+            resp.sendRedirect("index.jsp");
+            HttpSession  session=req.getSession(true);
+            session.setAttribute("errorMessage", "Incorrect username and/or password");
+        } catch (Exception e){
+            logger.info("[DEBUG] Unknown EXCEPTION: " + e.getMessage());
+            resp.sendRedirect("index.jsp");
+            HttpSession  session=req.getSession(true);
+            session.setAttribute("errorMessage", "Internal Server Error");
         }
     }
 }

@@ -1,9 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Login/Sign up</title>
+    <title>Search file</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--===============================================================================================-->
@@ -29,74 +28,42 @@
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <!--===============================================================================================-->
 </head>
+<%
+    String uname = (String) session.getAttribute("username");
+    if (null == uname) {
+        session.setAttribute("errorMessage", "Please login first");
+        response.sendRedirect("index.jsp");
+    }
+%>
 <body>
-
 <div class="container">
     <div class="row">
-            <div class="limiter">
-                <div class="container-login100">
-                    <div class="wrap-login100 p-t-50 p-b-90">
-                        <form class="login100-form validate-form flex-sb flex-w" method="post" action="SignupServlet">
+        <div class="limiter">
+            <div class="container-login100">
+                <div class="wrap-login100 p-t-50 p-b-90">
+                    <form class="login100-form validate-form flex-sb flex-w">
 					<span class="login100-form-title p-b-51">
-						Sign up
+						Services
 					</span>
-                            <div class="wrap-input100 validate-input m-b-16" data-validate = "Username is required">
-                                <input class="input100" type="text" name="username_s" placeholder="Username">
-                                <span class="focus-input100"></span>
-                            </div>
-                            <div class="wrap-input100 validate-input m-b-16" data-validate = "Password is required">
-                                <input class="input100" type="password" name="pass_s" placeholder="Password">
-                                <span class="focus-input100"></span>
-                            </div>
-                            <div class="wrap-input100 validate-input m-b-16" data-validate = "Confirm Password is required">
-                                <input class="input100" type="password" name="pass_confirm_s" placeholder="Confirm Password">
-                                <span class="focus-input100"></span>
-                            </div>
-                            <div class="container-login100-form-btn m-t-17">
-                                <button class="login100-form-btn" type="submit">
-                                    Sign up
-                                </button>
-                            </div>
-                        </form>
                         <div class="container-login100-form-btn m-t-17">
-                            <a class="login100-form-btn" href="index.jsp">Login</a>
+                            <a class="login100-form-btn" href="search.jsp">Search File</a>
                         </div>
-                        <!-- Qui di seguito si invalida la sessione nel caso ci sia stato un errore nella login -->
-                        <%
-                            String ErrorMessage = (String) session.getAttribute("ErrorMessage");
-                            if (null != ErrorMessage) { %>
-                                <div class="alert m-t-17">
-                                    <span class="closebtn">&times;</span>
-                                    <strong> <%=ErrorMessage %></strong>
-                                </div>
-                                <% session.removeAttribute("ErrorMessage"); %>
-                            <%}
-                            String SuccessMessage = (String) session.getAttribute("SuccessMessage");
-                            if (null != SuccessMessage) { %>
-                                <div class="alert success m-t-17">
-                                    <span class="closebtn">&times;</span>
-                                    <strong> <%=SuccessMessage %></strong>
-                                </div>
-                                <% session.removeAttribute("SuccessMessage"); %>
-                            <%}
-                        %>
-                        <script>
-                            const close = document.getElementsByClassName("closebtn");
-                            let i;
-
-                            for (i = 0; i < close.length; i++) {
-                                close[i].onclick = function(){
-                                    const div = this.parentElement;
-                                    div.style.opacity = "0";
-                                    setTimeout(function(){ div.style.display = "none"; }, 600);
-                                }
-                            }
-                        </script>
-                    </div>
+                        <div class="container-login100-form-btn m-t-17">
+                            <a class="login100-form-btn" href="upload.jsp">Upload File</a>
+                        </div>
+                        <div class="container-login100-form-btn m-t-17">
+                            <a class="login100-form-btn" href="setConnParams.jsp">Set address and listen port</a>
+                        </div>
+                        <div class="container-login100-form-btn m-t-17">
+                            <a class="login100-form-btn" href="index.jsp">Logout</a>
+                        </div>
+                    </form>
                 </div>
             </div>
+        </div>
     </div>
 </div>
+
 
 
 <div id="dropDownSelect1"></div>

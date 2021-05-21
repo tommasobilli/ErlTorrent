@@ -11,6 +11,12 @@ public class User implements Serializable {
     private String address;
     private String listeningPort;
 
+    public User(String username, String pwd, String APIToken){
+        this.username = username;
+        this.pwd = pwd;
+        this.APIToken = APIToken;
+    }
+
     public User(String pid, String username, String pwd, String APIToken, String address, String listeningPort){
         this.pid = pid;
         this.username = username;

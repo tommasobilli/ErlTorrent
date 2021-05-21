@@ -6,6 +6,7 @@ import db.dbConnector;
 import db.entities.dbUser;
 import entities.User;
 import exceptions.UserNotFoundException;
+import org.bson.types.ObjectId;
 
 import java.util.logging.Logger;
 
@@ -28,6 +29,35 @@ public class UserDAO implements IUserDAO {
         }
 
         return dbUserToUser(user);
+    }
+
+    public User createUser(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException();
+        }
+
+        dbUser dbUser = UserToDbUser(user);
+
+        collection.insertOne(dbUser);
+
+        return dbUserToUser(dbUser);
+    }
+
+    private dbUser UserToDbUser(User user) {
+
+        if (user == null) {
+            return null;
+        }
+
+        ObjectId id = null;
+        String username = user.getUsername();
+        String pwd = user.getPwd();
+        String token = user.getAPIToken();
+        String address = null;
+        String listeningPort = null;
+
+        return new dbUser(null, pwd, username, token, null, null);
+
     }
 
     protected User dbUserToUser(dbUser user) {

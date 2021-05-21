@@ -28,6 +28,13 @@
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <!--===============================================================================================-->
 </head>
+<%
+    String uname = (String) session.getAttribute("username");
+    if (null == uname) {
+        session.setAttribute("errorMessage", "Please login first");
+        response.sendRedirect("index.jsp");
+    }
+%>
 <body>
 <div class="limiter">
     <div class="container-login100">

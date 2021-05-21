@@ -9,4 +9,6 @@ public interface IUserBean {
 
     User getUser(String username) throws UserNotFoundException;
 
+    User createUser(User user);
+
 }

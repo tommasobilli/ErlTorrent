@@ -22,4 +22,10 @@ public class UserBean implements IUserBean{
     public User getUser(String username) throws UserNotFoundException {
         return iUserDAO.getUser(username);
     }
+
+    @Override
+    public User createUser(User user) {
+        return iUserDAO.createUser(user);
+    }
+
 }

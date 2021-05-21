@@ -22,7 +22,8 @@ public class dbConnector {
     private final MongoClient client;
     private final MongoDatabase database;
     private final CodecRegistry pojoCodecRegistry;
-    private static final String CONNECTION_STRING = "mongodb://localhost:27017";
+    //Variabile Globale settata da pannello admin: server.config=>JVM Settings=>JVMOPTIONS
+    private static final String CONNECTION_STRING = System.getProperty("DB_ADDR");
 
     private dbConnector() {
         this.pojoCodecRegistry = fromRegistries(

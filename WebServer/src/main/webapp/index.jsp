@@ -31,6 +31,7 @@
 </head>
 <body>
 
+
 <div class="container">
         <div class="row">
             <div class="limiter">
@@ -57,24 +58,32 @@
                         <div class="container-login100-form-btn m-t-17">
                             <a class="login100-form-btn" href="signup.jsp">Signup</a>
                         </div>
-                        <c:if test="${not empty errorMessage}">
-                            <div class="alert m-t-17">
-                                <span class="closebtn">&times;</span>
-                                <strong>${errorMessage}</strong>
-                            </div>
-                            <script>
-                                const close = document.getElementsByClassName("closebtn");
-                                let i;
+                        <!-- Qui di seguito si invalida la sessione nel caso ci sia stato un errore nella login -->
+                        <%  String errorMessage = (String) session.getAttribute("errorMessage");
+                            if (null !=errorMessage) { %>
+                                <div class="alert m-t-17">
+                                    <span class="closebtn">&times;</span>
+                                    <strong> <%=errorMessage %></strong>
+                                </div>
+                                <% session.removeAttribute("errorMessage"); %>
+                            <%}
+                            String uname = (String) session.getAttribute("username");
+                            if (null !=uname) { %>
+                                <% session.removeAttribute("username"); %>
+                            <%}
+                        %>
+                        <script>
+                            const close = document.getElementsByClassName("closebtn");
+                            let i;
 
-                                for (i = 0; i < close.length; i++) {
-                                    close[i].onclick = function(){
-                                        const div = this.parentElement;
-                                        div.style.opacity = "0";
-                                        setTimeout(function(){ div.style.display = "none"; }, 600);
-                                    }
+                            for (i = 0; i < close.length; i++) {
+                                close[i].onclick = function(){
+                                    const div = this.parentElement;
+                                    div.style.opacity = "0";
+                                    setTimeout(function(){ div.style.display = "none"; }, 600);
                                 }
-                            </script>
-                        </c:if>
+                            }
+                        </script>
                     </div>
                 </div>
             </div>
