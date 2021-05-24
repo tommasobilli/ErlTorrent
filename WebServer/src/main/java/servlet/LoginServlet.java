@@ -1,14 +1,17 @@
 package servlet;
+import entities.User;
 import exceptions.IncorrectPasswordException;
 import exceptions.UserNotFoundException;
 import interfaces.IUserBean;
+
 import javax.ejb.EJB;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.annotation.*;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.logging.Logger;
-import entities.User;
 
 
 @WebServlet(name = "LoginServlet", value = "/LoginServlet")
@@ -39,7 +42,10 @@ public class LoginServlet extends HttpServlet {
             }
 
             HttpSession session = req.getSession(true);
+            logger.info("[DEBUG] inside the service method of SetAddressPortServlet " + user.getAddress() + user.getListeningPort());
             session.setAttribute("username", user.getUsername());
+            session.setAttribute("address", user.getAddress());
+            String port = user.getListeningPort();
             resp.sendRedirect("home.jsp");
 
         } catch (UserNotFoundException| IncorrectPasswordException e) {

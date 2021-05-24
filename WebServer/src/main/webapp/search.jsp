@@ -30,9 +30,14 @@
 </head>
 <%
     String uname = (String) session.getAttribute("username");
+    String address = (String) session.getAttribute("address");
     if (null == uname) {
         session.setAttribute("errorMessage", "Please login first");
         response.sendRedirect("index.jsp");
+    }
+    if (null == address) {
+        session.setAttribute("errorMessage", "Please add your configuration first");
+        response.sendRedirect("home.jsp");
     }
 %>
 <body>

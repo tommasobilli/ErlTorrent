@@ -1,10 +1,13 @@
 package db.DAO;
 
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import db.IUserDAO;
 import db.dbConnector;
 import db.entities.dbUser;
 import entities.User;
+import exceptions.PortNotCorrectException;
 import exceptions.UserNotFoundException;
 import org.bson.types.ObjectId;
 
@@ -27,8 +30,18 @@ public class UserDAO implements IUserDAO {
         if (user == null) {
             throw new UserNotFoundException(username);
         }
-
         return dbUserToUser(user);
+    }
+
+    @Override
+    public void setAddressAndPort(String address, String port, String username) throws PortNotCorrectException {
+        dbUser lis = collection.find(Filters.and(Filters.eq("listening_port", port), Filters.eq("address", address))).first();
+
+        if (lis != null) {
+            throw new PortNotCorrectException(username);
+        }
+        collection.updateOne(Filters.eq("username", username),  Updates.set("listening_port", port));
+        collection.updateOne(Filters.eq("username", username),  Updates.set("address", address));
     }
 
     public User createUser(User user) {

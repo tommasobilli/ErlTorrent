@@ -28,7 +28,7 @@
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <!--===============================================================================================-->
 </head>
-<%
+    <%
     String uname = (String) session.getAttribute("username");
     if (null == uname) {
         session.setAttribute("errorMessage", "Please login first");
@@ -57,6 +57,15 @@
                         <div class="container-login100-form-btn m-t-17">
                             <a class="login100-form-btn" href="index.jsp">Logout</a>
                         </div>
+                        <%  String errorMessage = (String) session.getAttribute("errorMessage");
+                            if (null !=errorMessage) { %>
+                        <div class="alert m-t-17">
+                            <span class="closebtn">&times;</span>
+                            <strong> <%=errorMessage %></strong>
+                        </div>
+                        <% session.removeAttribute("errorMessage"); %>
+                        <%}
+                        %>
                     </form>
                 </div>
             </div>
@@ -86,4 +95,3 @@
 <script src="js/main.js"></script>
 
 </body>
-</html>

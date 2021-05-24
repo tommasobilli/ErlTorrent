@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Login/Sign up</title>
+    <title>Login</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--===============================================================================================-->
@@ -30,64 +30,70 @@
     <!--===============================================================================================-->
 </head>
 <body>
-
-
 <div class="container">
-        <div class="row">
-            <div class="limiter">
-                <div class="container-login100">
-                    <div class="wrap-login100 p-t-50 p-b-90">
-                        <form class="login100-form validate-form flex-sb flex-w" method="post" action="LoginServlet">
+    <div class="row">
+        <div class="limiter">
+            <div class="container-login100">
+                <div class="wrap-login100 p-t-50 p-b-90">
+                    <form class="login100-form validate-form flex-sb flex-w" method="post" action="LoginServlet">
                             <span class="login100-form-title p-b-51">
                                 Login
                             </span>
-                            <div class="wrap-input100 validate-input m-b-16" data-validate = "Username is required">
-                                <input class="input100" type="text" name="username" placeholder="Username">
-                                <span class="focus-input100"></span>
-                            </div>
-                            <div class="wrap-input100 validate-input m-b-16" data-validate = "Password is required">
-                                <input class="input100" type="password" name="pass" placeholder="Password">
-                                <span class="focus-input100"></span>
-                            </div>
-                            <div class="container-login100-form-btn m-t-17">
-                                <button class="login100-form-btn" type="submit">
-                                    Login
-                                </button>
-                            </div>
-                        </form>
-                        <div class="container-login100-form-btn m-t-17">
-                            <a class="login100-form-btn" href="signup.jsp">Signup</a>
+                        <div class="wrap-input100 validate-input m-b-16" data-validate = "Username is required">
+                            <input class="input100" type="text" name="username" placeholder="Username">
+                            <span class="focus-input100"></span>
                         </div>
-                        <!-- Qui di seguito si invalida la sessione nel caso ci sia stato un errore nella login -->
-                        <%  String errorMessage = (String) session.getAttribute("errorMessage");
-                            if (null !=errorMessage) { %>
-                                <div class="alert m-t-17">
-                                    <span class="closebtn">&times;</span>
-                                    <strong> <%=errorMessage %></strong>
-                                </div>
-                                <% session.removeAttribute("errorMessage"); %>
-                            <%}
-                            String uname = (String) session.getAttribute("username");
-                            if (null !=uname) { %>
-                                <% session.removeAttribute("username"); %>
-                            <%}
-                        %>
-                        <script>
-                            const close = document.getElementsByClassName("closebtn");
-                            let i;
-
-                            for (i = 0; i < close.length; i++) {
-                                close[i].onclick = function(){
-                                    const div = this.parentElement;
-                                    div.style.opacity = "0";
-                                    setTimeout(function(){ div.style.display = "none"; }, 600);
-                                }
-                            }
-                        </script>
+                        <div class="wrap-input100 validate-input m-b-16" data-validate = "Password is required">
+                            <input class="input100" type="password" name="pass" placeholder="Password">
+                            <span class="focus-input100"></span>
+                        </div>
+                        <div class="container-login100-form-btn m-t-17">
+                            <button class="login100-form-btn" type="submit">
+                                Login
+                            </button>
+                        </div>
+                    </form>
+                    <div class="container-login100-form-btn m-t-17">
+                        <a class="login100-form-btn" href="signup.jsp">Signup</a>
                     </div>
+                    <!-- Qui di seguito si invalida la sessione nel caso ci sia stato un errore nella login -->
+                    <%  String errorMessage = (String) session.getAttribute("errorMessage");
+                        if (null !=errorMessage) { %>
+                    <div class="alert m-t-17">
+                        <span class="closebtn">&times;</span>
+                        <strong> <%=errorMessage %></strong>
+                    </div>
+                    <% session.removeAttribute("errorMessage"); %>
+                    <%}
+                        String uname = (String) session.getAttribute("username");
+                        if (null !=uname) { %>
+                    <% session.removeAttribute("username"); %>
+                    <%}
+                        String address = (String) session.getAttribute("address");
+                        if (null !=address) { %>
+                    <%  session.removeAttribute("address"); %>
+                    <%}
+                        String port = (String) session.getAttribute("port");
+                        if (null !=port) { %>
+                    <%  session.removeAttribute("port"); %>
+                    <%}
+                    %>
+                    <script>
+                        const close = document.getElementsByClassName("closebtn");
+                        let i;
+
+                        for (i = 0; i < close.length; i++) {
+                            close[i].onclick = function(){
+                                const div = this.parentElement;
+                                div.style.opacity = "0";
+                                setTimeout(function(){ div.style.display = "none"; }, 600);
+                            }
+                        }
+                    </script>
                 </div>
             </div>
         </div>
+    </div>
 </div>
 
 

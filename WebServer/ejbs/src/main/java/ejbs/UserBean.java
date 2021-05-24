@@ -1,13 +1,14 @@
 package ejbs;
 
-import javax.ejb.Stateless;
-
 import db.DAO.UserDAO;
 import db.IUserDAO;
 import db.dbConnector;
 import entities.User;
+import exceptions.PortNotCorrectException;
 import exceptions.UserNotFoundException;
 import interfaces.IUserBean;
+
+import javax.ejb.Stateless;
 
 //@Stateless(name = "UserEJB")
 @Stateless
@@ -28,4 +29,10 @@ public class UserBean implements IUserBean{
         return iUserDAO.createUser(user);
     }
 
+    @Override
+    public void setAddressAndPort(String address, String port, String username) throws PortNotCorrectException {
+        iUserDAO.setAddressAndPort(address, port, username);
+    }
+
 }
+

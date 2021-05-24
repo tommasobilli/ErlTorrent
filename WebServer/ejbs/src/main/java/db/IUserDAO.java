@@ -1,6 +1,7 @@
 package db;
 
 import entities.User;
+import exceptions.PortNotCorrectException;
 import exceptions.UserNotFoundException;
 
 public interface IUserDAO {
@@ -9,4 +10,7 @@ public interface IUserDAO {
 
     User createUser(User user);
 
+    void setAddressAndPort(String address, String port, String username) throws PortNotCorrectException;
+
 }
+
