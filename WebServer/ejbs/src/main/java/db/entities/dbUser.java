@@ -8,19 +8,19 @@ public class dbUser {
     private String username;
     private String token;
     private String address;
-    private String listeningPort;
+    private String listening_port;
 
     public dbUser(){
 
     }
 
-    public dbUser(ObjectId id,  String pwd, String username, String token ,String address, String listeningPort){
+    public dbUser(ObjectId id,  String pwd, String username, String token ,String address, String listening_port){
         this.id = id;
         this.pwd = pwd;
         this.username = username;
         this.token = token;
         this.address = address;
-        this.listeningPort = listeningPort;
+        this.listening_port = listening_port;
     }
 
     public String getUsername(){
@@ -62,10 +62,10 @@ public class dbUser {
     }
 
     public String getListeningPort(){
-        return this.listeningPort;
+        return this.listening_port;
     }
 
     public void setListeningPort(String listeningPort) {
-        this.listeningPort = listeningPort;
+        this.listening_port = listeningPort;
     }
 }

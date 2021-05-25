@@ -12,5 +12,7 @@ public interface IUserDAO {
 
     void setAddressAndPort(String address, String port, String username) throws PortNotCorrectException;
 
+    String getUserPort(String pid);
+
 }
 

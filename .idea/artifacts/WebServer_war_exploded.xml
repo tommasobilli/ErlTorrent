@@ -27,6 +27,9 @@
           <element id="library" level="project" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:1.4.0" />
           <element id="library" level="project" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.4.0" />
           <element id="library" level="project" name="Maven: org.jetbrains:annotations:13.0" />
+          <element id="library" level="project" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" />
+          <element id="library" level="project" name="Maven: junit:junit:4.10" />
+          <element id="library" level="project" name="Maven: org.hamcrest:hamcrest-core:1.1" />
           <element id="archive" name="ejbs-interfaces-1.0-SNAPSHOT.jar">
             <element id="module-output" name="ejbs-interfaces" />
           </element>

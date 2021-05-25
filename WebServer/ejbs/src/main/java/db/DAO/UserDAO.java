@@ -1,7 +1,9 @@
 package db.DAO;
 
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Updates;
 import db.IUserDAO;
 import db.dbConnector;
@@ -9,6 +11,8 @@ import db.entities.dbUser;
 import entities.User;
 import exceptions.PortNotCorrectException;
 import exceptions.UserNotFoundException;
+import org.bson.Document;
+import org.bson.json.JsonObject;
 import org.bson.types.ObjectId;
 
 import java.util.logging.Logger;
@@ -94,5 +98,14 @@ public class UserDAO implements IUserDAO {
         }
 
         return new User(pid, username, pwd, APIToken, address, listeningPort);
+    }
+
+    @Override
+    public String getUserPort(String username) {
+        Logger logger = Logger.getLogger(getClass().getName());
+        logger.info("[DEBUG] inside dbUserToUser");
+        dbUser user = collection.find(eq("username", username)).first();
+        logger.info("[DEBUG] " + user.getListeningPort());
+        return user.getListeningPort();
     }
 }
