@@ -45,11 +45,13 @@ public class UploadFilesServlet extends HttpServlet {
         }
         if (fileIsPresent) {
             logger.info("[DEBUG] File is present");
-            try {
-                erlangServerBean.addUsertoTracker(filename, username, pid, address);
-            } catch(Exception e) {
-
+            boolean insertion = erlangServerBean.addUsertoTracker(filename, username, pid, address);
+            if (!insertion) {
+                session = request.getSession(true);
+                session.setAttribute("errorMessage", "Insertion has not been possible");
             }
+            else { logger.info("[DEBUG] Insertion successful!");}
+            response.sendRedirect("upload.jsp");
         }
         else {
             logger.info("[DEBUG] File is not present");

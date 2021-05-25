@@ -9,5 +9,5 @@ import java.io.IOException;
 public interface ISingletonErlangBean {
     public boolean verifyPreviousUploads(String filename, String pid_user) throws IOException, FileAlreadyUploadedException;
 
-    void addUsertoTracker(String filename, String username, String pid, String address);
+    boolean addUsertoTracker(String filename, String username, String pid, String address) throws IOException;
 }

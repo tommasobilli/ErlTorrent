@@ -12,7 +12,6 @@ import java.net.*;
 
 public class HttpConnection {
     private URL url_help = new URL("http://localhost:8081/1/help");
-    private URL url_POST_users = new URL("http://localhost:8081/1/users");
 
     public HttpConnection() throws IOException {}
 
@@ -40,23 +39,23 @@ public class HttpConnection {
         return json;
     }
 
-    /*public void make_POST_request() throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) this.url_POST_users.openConnection();
+    public void make_POST_request(String pid, String filename, String address, String listening_port) throws IOException {
+        URL url_POST_users = new URL("http://localhost:8081/1/users"); //tracker1
+        HttpURLConnection connection = (HttpURLConnection) url_POST_users.openConnection();
         connection.setRequestProperty("Authorization",
                 "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.GLp5qO7bVEAXkt4z8XfgglKoRrl3NN1QkeVIFgznkjI");
         String message;
         JSONObject json = new JSONObject();
-        json.put("pid", admin.myConfig.peerId.toString());
-        json.put("address", admin.myConfig.peerAddress.toString());
-        json.put("port", Integer.toString(admin.myConfig.peerPort));
-        json.put("filename", admin.commonConfig.FileName.toString());
+        json.put("pid", pid);
+        json.put("address", address);
+        json.put("port", listening_port);
+        json.put("filename", filename);
         /*
         JSONObject jsonObj = new JSONObject();
         jsonObj.put("id", 0);
         jsonObj.put("name", "testName");
         json.put("test2", jsonObj);
         */
-        /*
         message = json.toString();
         System.out.println(message);
         connection.setRequestProperty("Content-Type", "application/json");

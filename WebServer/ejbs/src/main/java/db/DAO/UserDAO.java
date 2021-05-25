@@ -22,9 +22,11 @@ import static com.mongodb.client.model.Filters.eq;
 public class UserDAO implements IUserDAO {
 
     private final MongoCollection<dbUser> collection;
+    private final MongoCollection<Document> collection_users;
 
     public UserDAO(dbConnector instance) {
         this.collection = instance.getDatabase().getCollection("users", dbUser.class);
+        this.collection_users = instance.getDatabase().getCollection("users");
     }
 
     @Override
@@ -104,8 +106,13 @@ public class UserDAO implements IUserDAO {
     public String getUserPort(String username) {
         Logger logger = Logger.getLogger(getClass().getName());
         logger.info("[DEBUG] inside dbUserToUser");
-        dbUser user = collection.find(eq("username", username)).first();
-        logger.info("[DEBUG] " + user.getListeningPort());
-        return user.getListeningPort();
+        MongoCursor<Document> cursor = collection_users.find(eq("username", username)).cursor();
+        if (cursor.hasNext()) {
+            Document doc = cursor.next();
+            String port = doc.getString("listening_port");
+            logger.info("[DEBUG]" + port);
+            return port;
+        }
+        return null;
     }
 }

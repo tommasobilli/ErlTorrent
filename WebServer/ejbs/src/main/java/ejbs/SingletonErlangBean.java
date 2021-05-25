@@ -31,7 +31,7 @@ public class SingletonErlangBean implements ISingletonErlangBean {
 
     @Lock(LockType.READ)
     @Override
-    public boolean verifyPreviousUploads (String filename, String user_pid) throws IOException, FileAlreadyUploadedException {
+    public boolean verifyPreviousUploads(String filename, String user_pid) throws IOException, FileAlreadyUploadedException {
         Logger logger = Logger.getLogger(getClass().getName());
         String tracker_port = iTrackerDAO.getTracker(filename);
         if (tracker_port == "null") return false;
@@ -42,8 +42,7 @@ public class SingletonErlangBean implements ISingletonErlangBean {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        logger.info("[DEBUG] ciaoooo!");
-        ArrayList<JSONObject> peer= (ArrayList<JSONObject>) list.get("peers");
+        ArrayList<JSONObject> peer = (ArrayList<JSONObject>) list.get("peers");
         for (JSONObject item : peer) {
             logger.info("[DEBUG]" + item.get("pid"));
             if (item.get("pid").equals(user_pid))
@@ -54,10 +53,14 @@ public class SingletonErlangBean implements ISingletonErlangBean {
 
     @Lock(LockType.WRITE)
     @Override
-    public void addUsertoTracker(String filename, String username, String pid, String address) {
+    public boolean addUsertoTracker(String filename, String username, String pid, String address) throws IOException {
         Logger logger = Logger.getLogger(getClass().getName());
-        logger.info("[DEBUG] entro");
         String port = iUserDAO.getUserPort(username);
-        logger.info("[DEBUG]" + port);
+        try {
+            conn.make_POST_request(pid, filename, address, port);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 }
