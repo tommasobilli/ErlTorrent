@@ -1,4 +1,10 @@
 <%@ page import="java.util.Map" %>
+<%@ page import="java.text.CharacterIterator" %>
+<%@ page import="java.text.StringCharacterIterator" %>
+<%@ page import="java.net.URLEncoder" %>
+<%@ page import="java.nio.charset.Charset" %>
+<%@ page import="kotlin.text.Charsets" %>
+<%@ page import="java.nio.charset.StandardCharsets" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
@@ -81,6 +87,27 @@
             </div>
         </div>
         <div class="container">
+            <%!
+                public static String humanReadableByteCountBin(String filesize) {
+                    try {
+                        long bytes = Long.parseLong(filesize);
+                        long absB = bytes == Long.MIN_VALUE ? Long.MAX_VALUE : Math.abs(bytes);
+                        if (absB < 1024) {
+                            return bytes + " B";
+                        }
+                        long value = absB;
+                        CharacterIterator ci = new StringCharacterIterator("KMGTPE");
+                        for (int i = 40; i >= 0 && absB > 0xfffccccccccccccL >> i; i -= 10) {
+                            value >>= 10;
+                            ci.next();
+                        }
+                        value *= Long.signum(bytes);
+                        return String.format("%.1f %ciB", value / 1024.0, ci.current());
+                    } catch (Exception e) {
+                        return "";
+                    }
+                }
+            %>
             <%
                 Map<String, Map<String, String>> searchResults = null;
                 try {
@@ -108,11 +135,19 @@
                         String filesize = searchResults.get(filename).get("filesize");
                         String trackerAddress = searchResults.get(filename).get("tracker_address");
                         String trackerPort = searchResults.get(filename).get("tracker_port");
+                        String trackerAddrPort = trackerAddress + ":" + trackerPort;
+                        String filesizeReadable = humanReadableByteCountBin(filesize);
                         out.print("<tr>");
                         out.print("<td>" + filename + "</td>");
-                        out.print("<td>" + filesize + "</td>");
-                        out.print("<td>" + trackerAddress + ":" + trackerPort + "</td>");
-                        out.print("<td>" + "<button><i class=\"fa fa-download mr-2 grey-text\" aria-hidden=\"true\"></i></button> 1.5 kB" + "</td>");
+                        out.print("<td>" + filesizeReadable + "</td>");
+                        out.print("<td>" + trackerAddrPort + "</td>");
+                        out.print("<td>");
+                        out.print("<form method=\"post\" action=\"DownloadServlet\">");
+                        out.print("<input type=\"hidden\" name=\"filename\" id=\"filename\" value=\"" + filename + "\">");
+                        out.print("<input type=\"hidden\" name=\"filesize\" id=\"filesize\" value=\"" + filesize + "\">");
+                        out.print("<input type=\"hidden\" name=\"tracker_address\" id=\"tracker_address\" value=\"" + trackerAddress + "\">");
+                        out.print("<input type=\"hidden\" name=\"tracker_port\" id=\"tracker_port\" value=\"" + trackerPort + "\">");
+                        out.print("<button type=\"submit\"><i class=\"fa fa-download mr-2 grey-text\" aria-hidden=\"true\"></i></button> >1 kB</td></form>");
                     }
                     out.print("</tbody>\n" +
                             "                        <tfoot>\n" +
