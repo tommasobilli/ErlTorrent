@@ -66,8 +66,7 @@ public class DownloadServlet extends HttpServlet {
             resp.setHeader("Content-Disposition", "attachment; filename=" + filename + ".json");
             resp.getWriter().write(json);
         } else {
-            RequestDispatcher rd = req.getRequestDispatcher("index.jsp");
-            rd.forward(req, resp);
+            resp.sendRedirect("index.jsp");
         }
     }
 

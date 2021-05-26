@@ -57,6 +57,7 @@
 %>
 
 <body>
+<jsp:include page="navbar.jsp" />
 <div class="limiter">
     <c:choose>
     <c:when test="${!empty param.search}">

@@ -45,7 +45,7 @@
 %>
 
 <body>
-
+<jsp:include page="navbar.jsp" />
 <div class="container">
     <div class="row">
         <div class="limiter">
