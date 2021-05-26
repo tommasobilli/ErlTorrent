@@ -39,7 +39,6 @@ public class SingletonErlangBean implements ISingletonErlangBean {
         String tracker_port = iTrackerDAO.getTracker(filename);
         if (tracker_port == "null") return false;
         logger.info("[DEBUG] " + tracker_port);
-        logger.info("[DEBUG] st0  " + pid);
         JSONObject list = null;
         try {
             list = conn.make_GET_request(filename, tracker_port);
