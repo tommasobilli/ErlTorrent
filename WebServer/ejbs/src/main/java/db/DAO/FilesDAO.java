@@ -50,4 +50,15 @@ public class FilesDAO implements IFilesDAO {
             return resultMap;
         }
     }
+
+    @Override
+    public void insertFile(String filename, String size) {
+        Document doc = new Document("filename", filename).append("size", size);
+        collection.insertOne(doc);
+    }
+
+    @Override
+    public void deleteFile(String filename) {
+        collection.deleteOne(Filters.eq("filename", filename));
+    }
 }

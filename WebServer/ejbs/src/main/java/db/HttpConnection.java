@@ -39,7 +39,7 @@ public class HttpConnection {
         return json;
     }
 
-    public void make_POST_request(String pid, String filename, String address, String listening_port) throws IOException {
+    public void make_POST_request(String pid, String filename, String address, String listening_port, String tracker_port) throws IOException {
         URL url_POST_users = new URL("http://localhost:8081/1/users"); //tracker1
         HttpURLConnection connection = (HttpURLConnection) url_POST_users.openConnection();
         connection.setRequestProperty("Authorization",

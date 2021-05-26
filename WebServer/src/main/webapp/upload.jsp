@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Update file</title>
+    <title>Upload file</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--===============================================================================================-->
@@ -32,12 +32,11 @@
 <%
     String uname = (String) session.getAttribute("username");
     String address = (String) session.getAttribute("address");
-
+    session=request.getSession(true);
     if (null == uname) {
         session.setAttribute("errorMessage", "Please login first");
         response.sendRedirect("index.jsp");
-    }
-    if (null == address) {
+    } else if (null == address) {
         session.setAttribute("errorMessage", "Please add your configuration first");
         response.sendRedirect("home.jsp");
     }
@@ -66,29 +65,16 @@
                                 Upload new file
                             </button>
                         </div>
+                        <%  String errorMessage = (String) session.getAttribute("errorMessage");
+                            if (null !=errorMessage) { %>
+                        <div class="alert m-t-17">
+                            <span class="closebtn">&times;</span>
+                            <strong> <%=errorMessage %></strong>
+                        </div>
+                        <% session.removeAttribute("errorMessage"); %>
+                        <%}
+                        %>
                     </form>
-                    <!-- Qui di seguito si invalida la sessione nel caso ci sia stato un errore nella login -->
-                    <%  String errorMessage = (String) session.getAttribute("errorMessage");
-                        if (null !=errorMessage) { %>
-                    <div class="alert m-t-17">
-                        <span class="closebtn">&times;</span>
-                        <strong> <%=errorMessage %></strong>
-                    </div>
-                    <% session.removeAttribute("errorMessage"); %>
-                    <%}
-                    %>
-                    <script>
-                        const close = document.getElementsByClassName("closebtn");
-                        let i;
-
-                        for (i = 0; i < close.length; i++) {
-                            close[i].onclick = function(){
-                                const div = this.parentElement;
-                                div.style.opacity = "0";
-                                setTimeout(function(){ div.style.display = "none"; }, 600);
-                            }
-                        }
-                    </script>
                 </div>
             </div>
         </div>

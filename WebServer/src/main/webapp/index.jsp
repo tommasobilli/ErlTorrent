@@ -73,9 +73,9 @@
                         if (null !=address) { %>
                     <%  session.removeAttribute("address"); %>
                     <%}
-                        String port = (String) session.getAttribute("port");
-                        if (null !=port) { %>
-                    <%  session.removeAttribute("port"); %>
+                        String pid = (String) session.getAttribute("pid");
+                        if (null !=pid) { %>
+                    <%  session.removeAttribute("pid"); %>
                     <%}
                     %>
                     <script>
