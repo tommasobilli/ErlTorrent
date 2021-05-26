@@ -39,8 +39,9 @@ public class HttpConnection {
         return json;
     }
 
-    public void make_POST_request(String pid, String filename, String address, String listening_port) throws IOException {
+    public void make_POST_request(String pid, String filename, String address, String listening_port, String tracker_port) throws IOException {
         URL url_POST_users = new URL("http://localhost:8081/1/users"); //tracker1
+        //estraggo a caso e costruisco l'URL del tracker che contiene il file
         HttpURLConnection connection = (HttpURLConnection) url_POST_users.openConnection();
         connection.setRequestProperty("Authorization",
                 "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.GLp5qO7bVEAXkt4z8XfgglKoRrl3NN1QkeVIFgznkjI");

@@ -42,12 +42,12 @@ public class LoginServlet extends HttpServlet {
             }
 
             HttpSession session = req.getSession(true);
-            logger.info("[DEBUG] inside the service method of SetAddressPortServlet " + user.getAddress() + user.getListeningPort());
             session.setAttribute("username", user.getUsername());
             session.setAttribute("address", user.getAddress());
             session.setAttribute("pid", user.getPid());
-            String port = user.getListeningPort();
-            session.setAttribute("port", user.getListeningPort());
+            logger.info("[DEBUG] pid: " + user.getPid());
+            //String port = user.getListeningPort();
+            //session.setAttribute("port", user.getListeningPort());
             resp.sendRedirect("home.jsp");
 
         } catch (UserNotFoundException| IncorrectPasswordException e) {

@@ -46,4 +46,6 @@ public class dbConnector {
     public MongoDatabase getDatabase() {
         return database;
     }
+
+    public MongoClient getMongoClient() { return this.client; }
 }

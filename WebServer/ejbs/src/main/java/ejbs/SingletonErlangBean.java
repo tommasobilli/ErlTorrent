@@ -6,7 +6,10 @@ import db.HttpConnection;
 import db.ITrackerDAO;
 import db.IUserDAO;
 import db.dbConnector;
+import entities.User;
 import exceptions.FileAlreadyUploadedException;
+import exceptions.FileNotAddedException;
+import exceptions.UserNotFoundException;
 import interfaces.ISingletonErlangBean;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -31,11 +34,12 @@ public class SingletonErlangBean implements ISingletonErlangBean {
 
     @Lock(LockType.READ)
     @Override
-    public boolean verifyPreviousUploads(String filename, String user_pid) throws IOException, FileAlreadyUploadedException {
+    public boolean verifyPreviousUploads(String filename, String pid) throws IOException, FileAlreadyUploadedException {
         Logger logger = Logger.getLogger(getClass().getName());
         String tracker_port = iTrackerDAO.getTracker(filename);
         if (tracker_port == "null") return false;
         logger.info("[DEBUG] " + tracker_port);
+        logger.info("[DEBUG] st0  " + pid);
         JSONObject list = null;
         try {
             list = conn.make_GET_request(filename, tracker_port);
@@ -45,7 +49,7 @@ public class SingletonErlangBean implements ISingletonErlangBean {
         ArrayList<JSONObject> peer = (ArrayList<JSONObject>) list.get("peers");
         for (JSONObject item : peer) {
             logger.info("[DEBUG]" + item.get("pid"));
-            if (item.get("pid").equals(user_pid))
+            if (item.get("pid").equals(pid))
                 throw new FileAlreadyUploadedException();
         }
         return true;
@@ -56,11 +60,21 @@ public class SingletonErlangBean implements ISingletonErlangBean {
     public boolean addUsertoTracker(String filename, String username, String pid, String address) throws IOException {
         Logger logger = Logger.getLogger(getClass().getName());
         String port = iUserDAO.getUserPort(username);
+        String tracker_port = iTrackerDAO.getTracker(filename);
         try {
-            conn.make_POST_request(pid, filename, address, port);
+            conn.make_POST_request(pid, filename, address, port, tracker_port);
         } catch (Exception e) {
             return false;
         }
         return true;
+    }
+
+    @Lock(LockType.WRITE)
+    @Override
+    public void assignToTrackerAndInsert(String filename, String username, String pid, String address, String size) throws IOException, FileNotAddedException {
+        String port = iUserDAO.getUserPort(username);
+        boolean result = iTrackerDAO.insertNewUserForNewFile(filename, port, pid, address, size);
+        if (result == false)
+            throw new FileNotAddedException();
     }
 }
