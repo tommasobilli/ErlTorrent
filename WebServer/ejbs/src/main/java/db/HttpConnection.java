@@ -11,17 +11,11 @@ import java.io.OutputStreamWriter;
 import java.net.*;
 
 public class HttpConnection {
-    private URL url_help = new URL("http://localhost:8081/1/help");
-
     public HttpConnection() throws IOException {}
 
     public JSONObject make_GET_request(String filename, String tracker_port) throws IOException, ParseException {
-        int tracker = 0;
-        if (tracker_port == "8081") tracker = 1;
-        else if (tracker_port == "8082") tracker = 2;
-        else if (tracker_port == "8083") tracker = 3;
-        //URL url_GET_users_tracker1 = new URL("http://localhost:" + tracker_port +"/" + tracker +"/users?filename=" + filename);
-        URL url_GET_users_tracker1 = new URL("http://localhost:8081/1/users?filename=" + filename);
+        URL url_GET_users_tracker1 = new URL("http://localhost:" + tracker_port +"/1/users?filename=" + filename);
+        //URL url_GET_users_tracker1 = new URL("http://localhost:8081/1/users?filename=" + filename);
         HttpURLConnection conn_GET = (HttpURLConnection) url_GET_users_tracker1.openConnection();
         conn_GET.setRequestProperty("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.GLp5qO7bVEAXkt4z8XfgglKoRrl3NN1QkeVIFgznkjI");
         BufferedReader read = new BufferedReader(new InputStreamReader(conn_GET.getInputStream()));
@@ -40,7 +34,7 @@ public class HttpConnection {
     }
 
     public void make_POST_request(String pid, String filename, String address, String listening_port, String tracker_port) throws IOException {
-        URL url_POST_users = new URL("http://localhost:8081/1/users"); //tracker1
+        URL url_POST_users = new URL("http://localhost:" + tracker_port + "/1/users"); //tracker1
         HttpURLConnection connection = (HttpURLConnection) url_POST_users.openConnection();
         connection.setRequestProperty("Authorization",
                 "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.GLp5qO7bVEAXkt4z8XfgglKoRrl3NN1QkeVIFgznkjI");
