@@ -51,9 +51,12 @@
                         <div class="container-login100-form-btn m-t-17">
                             <a class="login100-form-btn" href="upload.jsp">Upload File</a>
                         </div>
-                        <div class="container-login100-form-btn m-t-17">
-                            <a class="login100-form-btn" href="setConnParams.jsp">Set address and listen port</a>
-                        </div>
+                        <%  String address = (String) session.getAttribute("address");
+                            if (null == address) { %>
+                            <div class="container-login100-form-btn m-t-17">
+                                <a class="login100-form-btn" href="setConnParams.jsp">Set address and listen port</a>
+                            </div>
+                        <%} %>
                         <div class="container-login100-form-btn m-t-17">
                             <a class="login100-form-btn" href="index.jsp">Logout</a>
                         </div>

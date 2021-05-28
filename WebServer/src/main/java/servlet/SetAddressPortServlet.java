@@ -48,6 +48,7 @@ public class SetAddressPortServlet extends HttpServlet {
                 throw new PortNotCorrectException((String) session.getAttribute("username"));
             userBean.setAddressAndPort(address, port, (String) session.getAttribute("username"));
             session.setAttribute("address", address);
+            logger.info("[DEBUG] " + session.getAttribute("address"));
             session.setAttribute("port", port);
             response.sendRedirect("home.jsp");
 

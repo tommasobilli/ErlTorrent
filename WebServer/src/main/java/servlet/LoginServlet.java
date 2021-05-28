@@ -45,7 +45,7 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("username", user.getUsername());
             session.setAttribute("address", user.getAddress());
             session.setAttribute("pid", user.getPid());
-            logger.info("[DEBUG] pid: " + user.getPid());
+            logger.info("[DEBUG] address: " + user.getAddress());
             //String port = user.getListeningPort();
             //session.setAttribute("port", user.getListeningPort());
             resp.sendRedirect("home.jsp");

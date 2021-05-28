@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Upload file</title>
+    <title>Login</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--===============================================================================================-->
@@ -32,11 +32,11 @@
 <%
     String uname = (String) session.getAttribute("username");
     String address = (String) session.getAttribute("address");
-    session=request.getSession(true);
     if (null == uname) {
         session.setAttribute("errorMessage", "Please login first");
         response.sendRedirect("index.jsp");
-    } else if (null == address) {
+    }
+    if (null == address) {
         session.setAttribute("errorMessage", "Please add your configuration first");
         response.sendRedirect("home.jsp");
     }
@@ -58,16 +58,28 @@
                             <span class="focus-input100"></span>
                         </div>
                         <div class="wrap-input100 validate-input m-b-16" data-validate = "size is required">
-                            <input class="input100" type="text" name="size" placeholder="Size" required>
+                            <input class="input100" id = "fileinput" type="file" placeholder="Size" required readonly>
+                            <span class="focus-input100"></span>
+                        </div>
+                        <div class="wrap-input100 validate-input m-b-16" data-validate = "size is required">
+                            <input class="input100" id = "text_size" type="text" name="size" placeholder="Size" required readonly>
                             <span class="focus-input100"></span>
                         </div>
                         <div class="container-login100-form-btn m-t-17">
-                            <button class="login100-form-btn" type="submit">
-                                Upload new file
+                            <button id="btnsubmit" class="login100-form-btn" type="submit" hidden = "true">
+                                Submit
                             </button>
                         </div>
+                        <script>
+                                function showFileSize() {
+                                var oFile = document.getElementById("fileinput").files[0].size; // <input type="file" id="fileUpload" accept=".jpg,.png,.gif,.jpeg"/>
+                                document.getElementById("text_size").setAttribute("value", oFile);
+                                var button = document.getElementById('btnsubmit');
+                                button.hidden = false;
+                            }
+                        </script>
                         <%  String errorMessage = (String) session.getAttribute("errorMessage");
-                            if (null !=errorMessage) { %>
+                            if (null != errorMessage) { %>
                         <div class="alert m-t-17">
                             <span class="closebtn">&times;</span>
                             <strong> <%=errorMessage %></strong>
@@ -76,6 +88,11 @@
                         <%}
                         %>
                     </form>
+                    <div class="container-login100-form-btn m-t-17">
+                        <button class="login100-form-btn" id="btnload" onclick="showFileSize()">
+                            Upload new file
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -100,6 +117,7 @@
 <!--===============================================================================================-->
 <script src="vendor/countdowntime/countdowntime.js"></script>
 <!--===============================================================================================-->
+<script src="js/main.js"></script>
 
 </body>
 </html>

@@ -34,13 +34,17 @@
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <!--===============================================================================================-->
 </head>
-</head>
 
 <%
     String uname = (String) session.getAttribute("username");
+    String address_set = (String) session.getAttribute("address");
     if (null == uname) {
         session.setAttribute("errorMessage", "Please login first");
         response.sendRedirect("index.jsp");
+    }
+    if (null != address_set) {
+        session.setAttribute("errorMessage", "Your configuration has already been set");
+        response.sendRedirect("home.jsp");
     }
 %>
 
@@ -81,10 +85,6 @@
                         String address = (String) session.getAttribute("address");
                         if (null !=address) { %>
                     <%  session.removeAttribute("address"); %>
-                    <%}
-                        String port = (String) session.getAttribute("port");
-                        if (null !=port) { %>
-                    <%  session.removeAttribute("port"); %>
                     <%}
                     %>
                     <script>

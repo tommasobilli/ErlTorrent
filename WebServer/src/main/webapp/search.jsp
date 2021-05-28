@@ -73,7 +73,6 @@
 					<span class="login100-form-title" style="padding-bottom: 10px !important;">
 						Search file
 					</span>
-
                     <div class="wrap-input100 m-b-16">
                         <input class="input100" type="text" name="search" placeholder="Search">
                         <span class="focus-input100"></span>
