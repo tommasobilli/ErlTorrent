@@ -1,13 +1,8 @@
 package com.example.ErlTorrent;
 
-import java.io.FileNotFoundException;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.*;
 
@@ -16,7 +11,7 @@ public class CommonConfig {
     private final String jsonFileName;
     public String FileName;
     public int FileSize;
-    public int PieceSize;
+    public static final int PieceSize = 256000;
 
     public CommonConfig(String jsonFileName) throws IOException, ParseException {
         this.jsonFileName = jsonFileName;
@@ -28,7 +23,7 @@ public class CommonConfig {
         JSONObject json = (JSONObject) obj;
 
         this.FileName = (String) json.get("FileName");
-        this.PieceSize = Integer.parseInt((String) json.get("PieceSize"));
+        //this.PieceSize = Integer.parseInt((String) json.get("PieceSize"));
         this.FileSize = Integer.parseInt((String) json.get("FileSize"));
     }
 }

@@ -94,6 +94,8 @@ public class UserDAO implements IUserDAO {
         String APIToken = user.getToken();
         String address = user.getAddress();
         String listeningPort = user.getListeningPort();
+        logger.info("[DEBUG] port is");
+        logger.info("" + listeningPort);
 
         if (user.getId() != null) {
             pid = user.getId().toHexString();

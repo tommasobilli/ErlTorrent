@@ -43,13 +43,13 @@ public class PeerAdmin {
     HttpConnection conn = new HttpConnection();
     public ExecutorService pool_threads = Executors.newCachedThreadPool();
 
-    public PeerAdmin() throws IOException, ParseException {
+    public PeerAdmin(String jsonFile) throws IOException, ParseException {
         this.peerInfoMap = new HashMap<>();
         this.piecesAvailability = new HashMap<>();
         this.peerList = new ArrayList<>();
         this.joinedPeers = new HashMap<>();
         this.peerInfoConfig = new PeerInfoConfig();
-        loadConfig("config.json");
+        loadConfig(jsonFile);
         this.logger = new PeerLogger(this.peerID);
         this.iamDone = false;
         this.initPeer();

@@ -46,8 +46,8 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("address", user.getAddress());
             session.setAttribute("pid", user.getPid());
             logger.info("[DEBUG] address: " + user.getAddress());
-            //String port = user.getListeningPort();
-            //session.setAttribute("port", user.getListeningPort());
+            logger.info("[DEBUG] address: " + user.getListeningPort());
+            session.setAttribute("port", user.getListeningPort());
             resp.sendRedirect("home.jsp");
 
         } catch (UserNotFoundException| IncorrectPasswordException e) {

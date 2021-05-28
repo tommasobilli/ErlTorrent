@@ -1,7 +1,6 @@
 package servlet;
 
 import com.google.gson.JsonObject;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,6 +13,7 @@ import java.util.logging.Logger;
 
 @WebServlet(name = "DownloadServlet", value = "/DownloadServlet")
 public class DownloadServlet extends HttpServlet {
+
     static class JsonBuilder {
         public final JsonObject json = new JsonObject();
 
@@ -66,7 +66,7 @@ public class DownloadServlet extends HttpServlet {
             resp.setHeader("Content-Disposition", "attachment; filename=" + filename + ".json");
             resp.getWriter().write(json);
         } else {
-            resp.sendRedirect("index.jsp");
+            resp.sendRedirect("home.jsp");
         }
     }
 
