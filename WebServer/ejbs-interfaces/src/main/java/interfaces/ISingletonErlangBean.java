@@ -17,5 +17,7 @@ public interface ISingletonErlangBean {
 
     boolean addUsertoTracker(String filename, String username, String pid, String address, String token) throws IOException;
 
-    void assignToTrackerAndInsert(String filename, String username, String pid, String address, String size, String token) throws IOException, FileNotAddedException;
+    String assignToTrackerAndInsert(String filename, String username, String pid, String address, String size, String token) throws IOException, FileNotAddedException;
+
+    String getTrackerAddrAndPort(String filename);
 }

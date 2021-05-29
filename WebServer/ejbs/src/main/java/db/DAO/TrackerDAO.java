@@ -42,21 +42,11 @@ public class TrackerDAO implements ITrackerDAO {
     }
 
     @Override
-    public boolean insertNewUserForNewFile(String filename, String port, String pid, String address, String size, String token) throws IOException {
+    public boolean insertNewUserForNewFile(String filename, String port, String pid, String address, String size, String token, String finalTracker_port) throws IOException {
         //scelta del tracker
-
-        //int n = (int) (Math.random()*3);
-        int n = ThreadLocalRandom.current().nextInt(0, 2 + 1);
-        String tracker_port = null;
-        if (n == 0) tracker_port = "8081";
-        else if (n == 1) tracker_port = "8082";
-        else if (n == 2) tracker_port = "8083";
-
         Logger logger = Logger.getLogger(getClass().getName());
-        //String tracker_port = "8081";
         boolean result = false;
         final ClientSession clientSession = client.startSession();
-        String finalTracker_port = tracker_port;
         TransactionBody<Boolean> txnBody = new TransactionBody<Boolean>() {
             boolean check = true;
 

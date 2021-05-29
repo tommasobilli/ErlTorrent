@@ -56,7 +56,7 @@
                                 Upload your files
                             </span>
                         <div class="wrap-input100 validate-input m-b-16" data-validate = "filename is required">
-                            <input class="input100" type="text" name="filename" placeholder="Filename" required>
+                            <input class="input100" type="text" name="filename" id = "nameF" placeholder="Filename" required readonly>
                             <span class="focus-input100"></span>
                         </div>
                         <div class="wrap-input100 validate-input m-b-16" data-validate = "size is required">
@@ -76,8 +76,12 @@
                                 function showFileSize() {
                                 var oFile = document.getElementById("fileinput").files[0].size; // <input type="file" id="fileUpload" accept=".jpg,.png,.gif,.jpeg"/>
                                 document.getElementById("text_size").setAttribute("value", oFile);
+                                var nFile = document.getElementById("fileinput").files[0].name;
+                                document.getElementById("nameF").setAttribute("value", nFile);
                                 var button = document.getElementById('btnsubmit');
                                 button.hidden = false;
+                                var button = document.getElementById('btnload');
+                                button.hidden = true;
                             }
                         </script>
                         <%  String errorMessage = (String) session.getAttribute("errorMessage");
@@ -88,7 +92,27 @@
                         </div>
                         <% session.removeAttribute("errorMessage"); %>
                         <%}
+                            String SuccessMessage = (String) session.getAttribute("SuccessMessage");
+                            if (null != SuccessMessage) { %>
+                        <div class="alert success m-t-17">
+                            <span class="closebtn">&times;</span>
+                            <strong> <%=SuccessMessage %></strong>
+                        </div>
+                        <% session.removeAttribute("SuccessMessage"); %>
+                        <%}
                         %>
+                        <script>
+                            const close = document.getElementsByClassName("closebtn");
+                            let i;
+
+                            for (i = 0; i < close.length; i++) {
+                                close[i].onclick = function(){
+                                    const div = this.parentElement;
+                                    div.style.opacity = "0";
+                                    setTimeout(function(){ div.style.display = "none"; }, 600);
+                                }
+                            }
+                        </script>
                     </form>
                     <div class="container-login100-form-btn m-t-17">
                         <button class="login100-form-btn" id="btnload" onclick="showFileSize()">
