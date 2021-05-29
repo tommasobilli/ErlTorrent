@@ -50,11 +50,13 @@ public class DownloadServlet extends HttpServlet {
         String pid = (String) session.getAttribute("pid");
         String address = (String) session.getAttribute("address");
         String port = (String) session.getAttribute("port");
+        String API_token = (String) session.getAttribute("API_token");
 
         if (filename != null && filesize != null && trackerAddress != null && trackerPort != null && pid != null && address != null && port != null) {
             logger.info("i'm heere");
             String json = new JsonBuilder()
                     .add("pid", pid)
+                    .add("API_token", API_token)
                     .add("listeningPort", port)
                     .add("trackerAddress", trackerAddress)
                     .add("FileName", filename)
