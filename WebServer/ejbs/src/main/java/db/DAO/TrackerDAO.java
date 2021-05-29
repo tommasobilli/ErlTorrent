@@ -14,6 +14,8 @@ import db.HttpConnection;
 import javax.websocket.Session;
 import java.io.IOException;
 import java.net.ConnectException;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Logger;
 
 public class TrackerDAO implements ITrackerDAO {
@@ -43,7 +45,8 @@ public class TrackerDAO implements ITrackerDAO {
     public boolean insertNewUserForNewFile(String filename, String port, String pid, String address, String size, String token) throws IOException {
         //scelta del tracker
 
-        int n = (int) (Math.random()*3);
+        //int n = (int) (Math.random()*3);
+        int n = ThreadLocalRandom.current().nextInt(0, 2 + 1);
         String tracker_port = null;
         if (n == 0) tracker_port = "8081";
         else if (n == 1) tracker_port = "8082";
