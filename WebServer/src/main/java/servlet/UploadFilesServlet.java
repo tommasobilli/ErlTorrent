@@ -44,10 +44,11 @@ public class UploadFilesServlet extends HttpServlet {
         String pid = (String) session.getAttribute("pid");
         String username = (String) session.getAttribute("username");
         String address = (String) session.getAttribute("address");
+        String API_token = (String) session.getAttribute("API_token");
         session.setAttribute("pid", pid);
         boolean fileIsPresent = false;
         try {
-            fileIsPresent = erlangServerBean.verifyPreviousUploads(filename, pid);
+            fileIsPresent = erlangServerBean.verifyPreviousUploads(filename, pid, API_token);
         } catch (FileAlreadyUploadedException e) {
             logger.info("[DEBUG] Unknown EXCEPTION: " + e.getMessage());
             response.sendRedirect("upload.jsp");
@@ -63,7 +64,7 @@ public class UploadFilesServlet extends HttpServlet {
         }
         if (fileIsPresent) {
             logger.info("[DEBUG] File is present");
-            boolean insertion = erlangServerBean.addUsertoTracker(filename, username, pid, address);
+            boolean insertion = erlangServerBean.addUsertoTracker(filename, username, pid, address, API_token);
             if (!insertion) {
                 session = request.getSession(true);
                 session.setAttribute("errorMessage", "Insertion has not been possible");
@@ -74,7 +75,7 @@ public class UploadFilesServlet extends HttpServlet {
         else {
             logger.info("[DEBUG] File is not present");
             try {
-                erlangServerBean.assignToTrackerAndInsert(filename, username, pid, address, size);
+                erlangServerBean.assignToTrackerAndInsert(filename, username, pid, address, size, API_token);
                 logger.info("[DEBUG] File has been correctly inserted");
                 response.sendRedirect("upload.jsp");
             } catch(FileNotAddedException e) {

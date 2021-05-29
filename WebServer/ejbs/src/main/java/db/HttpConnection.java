@@ -13,11 +13,12 @@ import java.net.*;
 public class HttpConnection {
     public HttpConnection() throws IOException {}
 
-    public JSONObject make_GET_request(String filename, String tracker_port) throws IOException, ParseException {
+    public JSONObject make_GET_request(String filename, String tracker_port, String token) throws IOException, ParseException {
         URL url_GET_users_tracker1 = new URL("http://localhost:" + tracker_port +"/1/users?filename=" + filename);
         //URL url_GET_users_tracker1 = new URL("http://localhost:8081/1/users?filename=" + filename);
         HttpURLConnection conn_GET = (HttpURLConnection) url_GET_users_tracker1.openConnection();
-        conn_GET.setRequestProperty("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.GLp5qO7bVEAXkt4z8XfgglKoRrl3NN1QkeVIFgznkjI");
+        String bearer = "Bearer " + token;
+        conn_GET.setRequestProperty("Authorization", bearer);
         BufferedReader read = new BufferedReader(new InputStreamReader(conn_GET.getInputStream()));
         int code = conn_GET.getResponseCode();
         //System.out.println(code);
@@ -33,11 +34,12 @@ public class HttpConnection {
         return json;
     }
 
-    public void make_POST_request(String pid, String filename, String address, String listening_port, String tracker_port) throws IOException {
+    public void make_POST_request(String pid, String filename, String address, String listening_port, String tracker_port, String token) throws IOException {
         URL url_POST_users = new URL("http://localhost:" + tracker_port + "/1/users"); //tracker1
         HttpURLConnection connection = (HttpURLConnection) url_POST_users.openConnection();
+        String bearer = "Bearer " + token;
         connection.setRequestProperty("Authorization",
-                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.GLp5qO7bVEAXkt4z8XfgglKoRrl3NN1QkeVIFgznkjI");
+                bearer);
         String message;
         JSONObject json = new JSONObject();
         json.put("pid", pid);

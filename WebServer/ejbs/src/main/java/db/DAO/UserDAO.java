@@ -41,12 +41,12 @@ public class UserDAO implements IUserDAO {
 
     @Override
     public void setAddressAndPort(String address, String port, String username) throws PortNotCorrectException {
-        dbUser lis = collection.find(Filters.and(Filters.eq("listening_port", port), Filters.eq("address", address))).first();
+        dbUser lis = collection.find(Filters.and(Filters.eq("listeningPort", port), Filters.eq("address", address))).first();
 
         if (lis != null) {
             throw new PortNotCorrectException(username);
         }
-        collection.updateOne(Filters.eq("username", username),  Updates.set("listening_port", port));
+        collection.updateOne(Filters.eq("username", username),  Updates.set("listeningPort", port));
         collection.updateOne(Filters.eq("username", username),  Updates.set("address", address));
     }
 
@@ -111,7 +111,7 @@ public class UserDAO implements IUserDAO {
         MongoCursor<Document> cursor = collection_users.find(eq("username", username)).cursor();
         if (cursor.hasNext()) {
             Document doc = cursor.next();
-            String port = doc.getString("listening_port");
+            String port = doc.getString("listeningPort");
             logger.info("[DEBUG]" + port);
             return port;
         }

@@ -41,10 +41,12 @@
     if (null == uname) {
         session.setAttribute("errorMessage", "Please login first");
         response.sendRedirect("index.jsp");
+        return;
     }
     if (null != address_set) {
         session.setAttribute("errorMessage", "Your configuration has already been set");
         response.sendRedirect("home.jsp");
+        return;
     }
 %>
 
@@ -74,18 +76,19 @@
                         </div>
                     </form>
                     <!-- Qui di seguito si invalida la sessione nel caso ci sia stato un errore nella login -->
-                    <%  String errorMessage = (String) session.getAttribute("errorMessage");
-                        if (null !=errorMessage) { %>
-                    <div class="alert m-t-17">
-                        <span class="closebtn">&times;</span>
-                        <strong> <%=errorMessage %></strong>
-                    </div>
-                    <% session.removeAttribute("errorMessage"); %>
-                    <%}
-                        String address = (String) session.getAttribute("address");
-                        if (null !=address) { %>
-                    <%  session.removeAttribute("address"); %>
-                    <%}
+                    <%
+                        String errorMessage = (String) session.getAttribute("errorMessage");
+                        if (null !=errorMessage) {
+                            out.print("<div class=\"alert m-t-17\">\n" +
+                                    "                        <span class=\"closebtn\">&times;</span>\n" +
+                                    "                        <strong>" + errorMessage + "</strong>\n" +
+                                    "                    </div>");
+                            session.removeAttribute("errorMessage");
+                            String address = (String) session.getAttribute("address");
+                            if (null != address) {
+                                session.removeAttribute("address");
+                            }
+                        }
                     %>
                     <script>
                         const close = document.getElementsByClassName("closebtn");

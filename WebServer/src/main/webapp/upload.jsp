@@ -35,10 +35,12 @@
     if (null == uname) {
         session.setAttribute("errorMessage", "Please login first");
         response.sendRedirect("index.jsp");
+        return;
     }
     if (null == address) {
         session.setAttribute("errorMessage", "Please add your configuration first");
         response.sendRedirect("home.jsp");
+        return;
     }
 %>
 

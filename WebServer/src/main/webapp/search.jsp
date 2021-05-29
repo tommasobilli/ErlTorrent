@@ -46,12 +46,15 @@
 <%
     String uname = (String) session.getAttribute("username");
     String address = (String) session.getAttribute("address");
+    String port = (String) session.getAttribute("port");
     if (null == uname) {
         session.setAttribute("errorMessage", "Please login first");
         response.sendRedirect("index.jsp");
-    } else if (null == address) {
+        return;
+    } else if (null == address && null == port) {
         session.setAttribute("errorMessage", "Please add your configuration first");
         response.sendRedirect("home.jsp");
+        return;
     }
 
 %>

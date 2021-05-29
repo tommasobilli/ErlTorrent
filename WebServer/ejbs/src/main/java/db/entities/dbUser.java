@@ -8,7 +8,7 @@ public class dbUser {
     private String username;
     private String token;
     private String address;
-    private String listening_port;
+    private String listeningPort;
 
     public dbUser(){
 
@@ -20,7 +20,7 @@ public class dbUser {
         this.username = username;
         this.token = token;
         this.address = address;
-        this.listening_port = listening_port;
+        this.listeningPort = listening_port;
     }
 
     public String getUsername(){
@@ -62,10 +62,10 @@ public class dbUser {
     }
 
     public String getListeningPort(){
-        return this.listening_port;
+        return this.listeningPort;
     }
 
     public void setListeningPort(String listeningPort) {
-        this.listening_port = listeningPort;
+        this.listeningPort = listeningPort;
     }
 }

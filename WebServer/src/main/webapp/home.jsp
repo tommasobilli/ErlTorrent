@@ -33,7 +33,9 @@
     if (null == uname) {
         session.setAttribute("errorMessage", "Please login first");
         response.sendRedirect("index.jsp");
+        return;
     }
+
 %>
 <body>
 <div class="container">

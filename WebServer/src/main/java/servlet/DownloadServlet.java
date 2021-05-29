@@ -45,6 +45,7 @@ public class DownloadServlet extends HttpServlet {
         String filesize = req.getParameter("filesize");
         String trackerAddress = req.getParameter("tracker_address");
         String trackerPort = req.getParameter("tracker_port");
+        String trackerAddrPort = trackerAddress + ":" + trackerPort;
 
         HttpSession session = req.getSession(false);
         String pid = (String) session.getAttribute("pid");
@@ -58,7 +59,7 @@ public class DownloadServlet extends HttpServlet {
                     .add("pid", pid)
                     .add("API_token", API_token)
                     .add("listeningPort", port)
-                    .add("trackerAddress", trackerAddress)
+                    .add("tracker_addr_port", trackerAddrPort)
                     .add("FileName", filename)
                     .add("FileSize", filesize)
                     .add("ContainsFile", "0")

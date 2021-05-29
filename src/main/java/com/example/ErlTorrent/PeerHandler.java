@@ -111,7 +111,7 @@ public class PeerHandler implements Runnable {
                     this.peerAdmin.writeToFile(piece, pieceIndex);
                     boolean first_piece = this.checkIfFirstPiece();
                     if (first_piece) {
-                        this.peerAdmin.conn.make_POST_request(this.peerAdmin);
+                        this.peerAdmin.conn.make_POST_request(this.peerAdmin, this.peerAdmin.getTracker_addr_port(), this.peerAdmin.getToken());
                     }
                     this.peerAdmin.updatePieceAvailability(this.peerAdmin.getPeerID(), pieceIndex);
                     this.peerAdmin.getLogger().downloadPiece(this.endPeerID, pieceIndex, this.peerAdmin.getCompletedPieceCount());

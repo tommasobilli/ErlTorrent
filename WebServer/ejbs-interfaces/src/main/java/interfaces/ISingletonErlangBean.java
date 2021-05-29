@@ -13,9 +13,9 @@ import java.io.IOException;
 public interface ISingletonErlangBean {
 
     @Lock(LockType.READ)
-    boolean verifyPreviousUploads(String filename, String pid) throws IOException, FileAlreadyUploadedException;
+    boolean verifyPreviousUploads(String filename, String pid, String token) throws IOException, FileAlreadyUploadedException;
 
-    boolean addUsertoTracker(String filename, String username, String pid, String address) throws IOException;
+    boolean addUsertoTracker(String filename, String username, String pid, String address, String token) throws IOException;
 
-    void assignToTrackerAndInsert(String filename, String username, String pid, String address, String size) throws IOException, FileNotAddedException;
+    void assignToTrackerAndInsert(String filename, String username, String pid, String address, String size, String token) throws IOException, FileNotAddedException;
 }

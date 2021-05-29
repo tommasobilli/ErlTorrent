@@ -40,6 +40,17 @@ public class PeerAdmin {
     private Thread serverThread;
     public volatile Boolean iamDone;
     public CommonConfig commonConfig;
+    private String token;
+
+    public String getToken() {
+        return token;
+    }
+
+    public String getTracker_addr_port() {
+        return tracker_addr_port;
+    }
+
+    private String tracker_addr_port;
     HttpConnection conn = new HttpConnection();
     public ExecutorService pool_threads = Executors.newCachedThreadPool();
 
@@ -62,6 +73,8 @@ public class PeerAdmin {
         this.peerID = (String) json.get("pid");
         String port = (String) json.get("listeningPort");
         String b = (String) json.get("ContainsFile");
+        this.token = (String) json.get("API_token");
+        this.tracker_addr_port = (String) json.get("tracker_addr_port");
         RemotePeerInfo myPeerInfo = new RemotePeerInfo(this.peerID, "127.0.0.1", port, b);
         this.peerInfoConfig.addPeer(myPeerInfo);
     }
@@ -69,7 +82,7 @@ public class PeerAdmin {
     public void initPeer() {
         try {
             // GET JSON from REST API ---------------------
-            JSONObject peerList = conn.make_GET_request(this.commonConfig.FileName);
+            JSONObject peerList = conn.make_GET_request(this.commonConfig.FileName, this.tracker_addr_port, this.token);
             //Object obj = new JSONParser().parse(new FileReader("peerList.json"));
             //JSONObject peerList = (JSONObject) obj;
             System.out.println(peerList);
@@ -98,7 +111,7 @@ public class PeerAdmin {
                 while (!this.checkIfDone()) {      //!iamdone
                     Thread.sleep(2000);
                     //get per richiedere la lista
-                    JSONObject peerList_new = conn.make_GET_request(this.commonConfig.FileName);
+                    JSONObject peerList_new = conn.make_GET_request(this.commonConfig.FileName, this.tracker_addr_port, this.token);
                     HashMap<String, RemotePeerInfo> newPeerMap = new HashMap<>();
                     newPeerMap = this.peerInfoConfig.get_new_peers(peerList_new);
                     for (String key : newPeerMap.keySet()) {
