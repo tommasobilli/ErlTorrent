@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class PeerProcess {
     public static void main(String[] args) throws IOException, ParseException {
-        String jsonFile = args[1];
+        String jsonFile = args[0];
         PeerAdmin admin = new PeerAdmin(jsonFile);
     }
 }
