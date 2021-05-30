@@ -62,6 +62,7 @@
                         <div class="container-login100-form-btn m-t-17">
                             <a class="login100-form-btn" href="index.jsp">Logout</a>
                         </div>
+                    </form>
                         <%  String errorMessage = (String) session.getAttribute("errorMessage");
                             if (null !=errorMessage) { %>
                         <div class="alert m-t-17">
@@ -83,7 +84,6 @@
                                 }
                             }
                         </script>
-                    </form>
                 </div>
             </div>
         </div>

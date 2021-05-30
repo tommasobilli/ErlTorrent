@@ -84,6 +84,12 @@
                                 button.hidden = true;
                             }
                         </script>
+                    </form>
+                    <div class="container-login100-form-btn m-t-17">
+                        <button class="login100-form-btn" id="btnload" onclick="showFileSize()">
+                            Upload new file
+                        </button>
+                    </div>
                         <%  String errorMessage = (String) session.getAttribute("errorMessage");
                             if (null != errorMessage) { %>
                         <div class="alert m-t-17">
@@ -113,12 +119,6 @@
                                 }
                             }
                         </script>
-                    </form>
-                    <div class="container-login100-form-btn m-t-17">
-                        <button class="login100-form-btn" id="btnload" onclick="showFileSize()">
-                            Upload new file
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>

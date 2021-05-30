@@ -44,7 +44,7 @@
         return;
     }
     if (null != address_set) {
-        session.setAttribute("errorMessage", "Your configuration has already been set");
+        session.setAttribute("errorMessage", "Connection already set up");
         response.sendRedirect("home.jsp");
         return;
     }
