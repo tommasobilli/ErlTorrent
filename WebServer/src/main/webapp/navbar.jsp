@@ -18,11 +18,6 @@
                     Upload a file
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="navbar-brand" href="setConnParams.jsp">
-                    Set up connection
-                </a>
-            </li>
         </ul>
     </div>
 </nav>
