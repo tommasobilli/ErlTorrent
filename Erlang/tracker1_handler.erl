@@ -14,7 +14,8 @@
 
 -record(state, {op}).
 
-
+%Chiamata che restituisce un subset casuale di massimo N elementi dalla lista SL passata come argomento
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 pick([N, SL]) ->
     Result = random(SL,N),
     Result.
@@ -35,22 +36,28 @@ delete_element(N,T) ->
     L = erlang:tuple_to_list(T),
     Ele = erlang:element(N, T),
     erlang:list_to_tuple(lists:filter(fun(X) -> X =/= Ele end, L)). 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% in tracker1_app lo stato del server è specificato con una lista contenente solo un atom es. [users] oppure [help],
+% questo record serve ad essere sicuri del tipo di dato usato come stato del server. 
+% chiamata che recupera lo stato, e fa scattare la catena di callback rest di cowboy
 init(Req, Opts) ->
     [Op | _] = Opts,
     State = #state{op=Op},
     {cowboy_rest, Req, State}.
 
+% chiamata in automatico da cowboy per controllare ad ogni richiesta in arrivo se il metodo è supportato
 allowed_methods(Req, State) ->
     Methods = [<<"GET">>, <<"POST">>],
     {Methods, Req, State}.
 
+% CHIAMATA SOLO IN CASO DI GET, specifica il tipo di dato offerto
 content_types_provided(Req, State) ->
     {[
         {<<"application/json">>, handle_get_request}
      ], Req, State}.
 
-
+% CHIAMATA SOLO IN CASO DI POST, specifica il tipo di dato accettato
 content_types_accepted(Req, State) ->
     {[
         {<<"application/json">>, handle_post_request}
@@ -107,6 +114,7 @@ append_time_to_json(OriginalJson) ->
 
     Body_resp.
 
+% ritorna messaggio contentenente le richieste supportate
 get_help_request(Req, State) ->
     Body = "{
             \"GET /1/help\": \"Resumes currently supported requests\",
@@ -115,6 +123,7 @@ get_help_request(Req, State) ->
     }", 
     {Body, Req, State}.
 
+%ritorna la lista di utenti in possesso di almeno un chuncks del file il cui name è specificato come QueryParams
 get_user_request(Req, State) ->
 
     try
@@ -136,6 +145,7 @@ get_user_request(Req, State) ->
         _:_ -> Resp = cowboy_req:reply(400,#{<<"content-type">> => <<"text/plain">>},<<"">>, Req), {ok, Resp, State}
     end.
 
+%Memorizza all'interno del file .dets l'utente assieme alle informazioni fornite all'interno del body della POST request
 post_user_request(Req, State) ->
     {ok, Json, Req1} = cowboy_req:read_body(Req),
     JsonList = binary_to_list(Json),
