@@ -95,13 +95,13 @@ public class SingletonErlangBean implements ISingletonErlangBean {
     @Override
     public void assignToTrackerAndInsert(String filename, String username, String pid, String address, String size, String token) throws IOException, FileNotAddedException {
         String port = iUserDAO.getUserPort(username);
-        //int n = ThreadLocalRandom.current().nextInt(0, 2 + 1);
-        //String tracker_port = null;
-        //if (n == 0) tracker_port = "8081";
-        //else if (n == 1) tracker_port = "8082";
-        //else if (n == 2) tracker_port = "8083";
-        String tracker_port = "8081";
-        //String trackerAddressAndPort = "127.0.0.1:" + tracker_port;
+        int n = ThreadLocalRandom.current().nextInt(0, 2 + 1);
+        String tracker_port = null;
+        if (n == 0) tracker_port = "8081";
+        else if (n == 1) tracker_port = "8082";
+        else if (n == 2) tracker_port = "8083";
+        //String tracker_port = "8081";
+        String trackerAddressAndPort = "127.0.0.1:" + tracker_port;
         boolean result = iTrackerDAO.insertNewUserForNewFile(filename, port, pid, address, size, token, tracker_port);
         if (!result)
             throw new FileNotAddedException();
