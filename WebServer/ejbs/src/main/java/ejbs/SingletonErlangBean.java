@@ -10,6 +10,7 @@ import db.dbConnector;
 import entities.User;
 import exceptions.FileAlreadyUploadedException;
 import exceptions.FileNotAddedException;
+import exceptions.NotSuccededInsertion;
 import exceptions.UserNotFoundException;
 import interfaces.ISingletonErlangBean;
 import org.json.simple.JSONObject;
@@ -18,6 +19,7 @@ import org.json.simple.parser.ParseException;
 import javax.ejb.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Logger;
 
 //@Singleton(name = "SingletonErlangBeanEJB")
@@ -33,24 +35,44 @@ public class SingletonErlangBean implements ISingletonErlangBean {
     public SingletonErlangBean() throws IOException {
     }
 
-    @Lock(LockType.READ)
+    @Lock(LockType.WRITE)
     @Override
-    public boolean verifyPreviousUploads(String filename, String pid, String token) throws IOException, FileAlreadyUploadedException {
+    public boolean verifyPreviousUploadsAndInsert(String filename, String pid, String API_token, String username, String address, String size) throws IOException, FileAlreadyUploadedException, NotSuccededInsertion, FileNotAddedException {
         Logger logger = Logger.getLogger(getClass().getName());
         String tracker_port = iTrackerDAO.getTracker(filename);
-        if (tracker_port == "null") return false;
-        logger.info("[DEBUG] " + tracker_port);
-        JSONObject list = null;
-        try {
-            list = conn.make_GET_request(filename, tracker_port, token);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        boolean isPresent = false;
+        if (tracker_port != "null") {
+            logger.info("[DEBUG] " + tracker_port);
+            JSONObject list = null;
+            try {
+                list = conn.make_GET_request(filename, tracker_port, API_token);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            ArrayList<JSONObject> peer = (ArrayList<JSONObject>) list.get("peers");
+            for (JSONObject item : peer) {
+                logger.info("[DEBUG]" + item.get("pid"));
+                if (item.get("pid").equals(pid)) {
+                    throw new FileAlreadyUploadedException();
+                }
+            }
+            isPresent = true;
         }
-        ArrayList<JSONObject> peer = (ArrayList<JSONObject>) list.get("peers");
-        for (JSONObject item : peer) {
-            logger.info("[DEBUG]" + item.get("pid"));
-            if (item.get("pid").equals(pid))
-                throw new FileAlreadyUploadedException();
+        if (isPresent) {
+            logger.info("[DEBUG] File is present");
+            boolean insertion = this.addUsertoTracker(filename, username, pid, address, API_token);
+            if (!insertion) {
+                throw new NotSuccededInsertion();
+            } else return insertion;
+        }
+        else {
+            logger.info("[DEBUG] File is not present");
+            try {
+                this.assignToTrackerAndInsert(filename, username, pid, address, size, API_token);
+                logger.info("[DEBUG] File has been correctly inserted");
+            } catch(FileNotAddedException e) {
+                return false;
+            }
         }
         return true;
     }
@@ -71,25 +93,21 @@ public class SingletonErlangBean implements ISingletonErlangBean {
 
     @Lock(LockType.WRITE)
     @Override
-    public String assignToTrackerAndInsert(String filename, String username, String pid, String address, String size, String token) throws IOException, FileNotAddedException {
+    public void assignToTrackerAndInsert(String filename, String username, String pid, String address, String size, String token) throws IOException, FileNotAddedException {
         String port = iUserDAO.getUserPort(username);
-        //int n = (int) (Math.random()*3);
-        /*
-        int n = ThreadLocalRandom.current().nextInt(0, 2 + 1);
-        String tracker_port = null;
-        if (n == 0) tracker_port = "8081";
-        else if (n == 1) tracker_port = "8082";
-        else if (n == 2) tracker_port = "8083";
-        */
+        //int n = ThreadLocalRandom.current().nextInt(0, 2 + 1);
+        //String tracker_port = null;
+        //if (n == 0) tracker_port = "8081";
+        //else if (n == 1) tracker_port = "8082";
+        //else if (n == 2) tracker_port = "8083";
         String tracker_port = "8081";
-        String trackerAddressAndPort = "127.0.0.1:" + tracker_port;
+        //String trackerAddressAndPort = "127.0.0.1:" + tracker_port;
         boolean result = iTrackerDAO.insertNewUserForNewFile(filename, port, pid, address, size, token, tracker_port);
-        if (result == false)
+        if (!result)
             throw new FileNotAddedException();
-        return trackerAddressAndPort;
     }
 
-    @Lock(LockType.WRITE)
+    @Lock(LockType.READ)
     @Override
     public String getTrackerAddrAndPort(String filename) {
         String tracker_port = iTrackerDAO.getTracker(filename);

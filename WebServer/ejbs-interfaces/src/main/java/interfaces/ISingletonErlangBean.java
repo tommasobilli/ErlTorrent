@@ -2,6 +2,7 @@ package interfaces;
 
 import exceptions.FileAlreadyUploadedException;
 import exceptions.FileNotAddedException;
+import exceptions.NotSuccededInsertion;
 import exceptions.UserNotFoundException;
 
 import javax.ejb.Lock;
@@ -13,11 +14,11 @@ import java.io.IOException;
 public interface ISingletonErlangBean {
 
     @Lock(LockType.READ)
-    boolean verifyPreviousUploads(String filename, String pid, String token) throws IOException, FileAlreadyUploadedException;
+    boolean verifyPreviousUploadsAndInsert(String filename, String pid, String token, String username, String address, String size) throws IOException, FileAlreadyUploadedException, NotSuccededInsertion, FileNotAddedException;
 
     boolean addUsertoTracker(String filename, String username, String pid, String address, String token) throws IOException;
 
-    String assignToTrackerAndInsert(String filename, String username, String pid, String address, String size, String token) throws IOException, FileNotAddedException;
+    void assignToTrackerAndInsert(String filename, String username, String pid, String address, String size, String token) throws IOException, FileNotAddedException;
 
     String getTrackerAddrAndPort(String filename);
 }
